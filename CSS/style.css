@@ -1,0 +1,361 @@
+:root {
+  --rouge: #310E10;
+  --beige: #F4E3B2;
+  --vert: #45462A;
+  --white: #ffffff;
+  --rouge2: #74070E;
+  --marron: #947268;
+}/*Permet de changer la couleur facilement, si on change la valeur de var(--vert) alors ca change tout les verts sans les modifier un par un*/
+
+
+* { box-sizing: border-box; }
+
+body { 
+  margin: 0; 
+  background: var(--beige); 
+  font-family: Arial, sans-serif;
+  color: var(--beige);
+  font-size: 16px;
+}
+
+/*HEADER*/
+.header {
+  position: relative;
+  height: 60vh; /* 60% de la hauteur de l'écran */
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2% 0 5%;
+  color: var(--beige);
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4%;
+  position: relative; /* Pour le positionnement du menu */
+  z-index: 2000;
+}
+
+/* LOGO*/
+.logo {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+}
+
+.logo img { 
+  height: 12vh;
+  min-height: 70px;
+  width: auto;
+}
+
+/* BOUTONS*/
+.burger {
+  background: var(--vert);
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--beige);
+}
+
+.btn-accueil {
+  background: var(--vert);/*couleur de fond*/
+  color: var(--beige);/*couleur du texte*/
+  text-decoration: none;
+  font-weight: bold;/*texte en gras*/
+  padding: 10px 20px;
+  border-radius: 8px;/*arrondi des coins du bouton menu burger*/
+  font-size: 1rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/*MENU DÉROULANT*/
+.menu-box {
+  position: relative;
+}
+
+.nav-menu {
+  display: none;/* Caché par défaut*/
+  position: absolute;/* Positionné par rapport à .menu-box */
+  top: 140%; /* Défile juste sous l icone burger */
+  left: 0;/* Aligné à gauche */
+  width: 320%;/* Largeur fixe en pixels pour éviter que les mots longs ne déforment le cadre */
+  background: var(--vert);/* Fond du menu défilant */
+  border-radius: 12px;/* Coins arrondis pour le menu défilant*/
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);/* Ombre pour le menu défilant pour le mettre en valeur*/
+  padding: 10px 0;/* Espace intérieur du menu, écart entre texte et bord du bloc menu défilant */
+  z-index: 3000;/* Au dessus des autres éléments, qu'il soit toujours visible */
+}
+
+.nav-menu a {
+  display: table;/* Indispensable pour que le lien s arrête pile à la fin du mot */
+  padding: 12px 20px;/* Espace autour du texte */
+  color: var(--white);/* Couleur du texte */
+  text-decoration: none;/* Pas de soulignement */
+  font-weight: bold;/* Texte en gras, plus visible et lisible */
+  position: relative; 
+  transition: all 0.3s ease;
+  width: auto;/* Le cadre s'adapte à la taille du mot */
+}
+
+.nav-menu a:hover {
+  background: var(--vert);/* Fond vert au hover pour rendre plus compréhensible/visible le bouton où la souris se trouve*/
+  color: var(--white);/* Texte blanc au hover*/
+  padding-left: 25px;/* Décalage du texte vers la droite au hover, rend plus compréhensible/visible le bouton où la souris se trouve */
+  transition: 0.3s;/* Transition douce pour l'effet hover, plus agréable */
+}
+
+.nav-menu a::after {
+  content: "";
+  position: absolute;
+  bottom: 8px;/* placement en dessous du texte */
+  left: 20px;  /* Aligné sur le début du texte */
+  right: 20px; /* Aligné sur la fin du texte pour un ajustement automatique parfait */
+  height: 3px;/* Hauteur de la barre */
+  background-color: var(--rouge2);
+  transform: scaleX(0);         /* Invisible par défaut (largeur 0) */
+  transition: transform 0.3s ease, left 0.3s ease; /* Transition fluide incluant le décalage */
+  transform-origin: left;       /* La barre "pousse" vers la droite */
+}
+
+.nav-menu a:hover::after {
+  transform: scaleX(1); /* La barre s'ajuste à la longueur du mot */
+  left: 25px; /* Aligne la barre avec le décalage du texte au hover */
+}
+
+#menu-toggle:checked ~ .nav-menu {
+  display: block;/* Affiche le menu lorsque la case est cochée */
+  animation: fadeIn 0.3s ease-out;/* Animation d'apparition douce */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }/* Départ de l'animation */
+  to { opacity: 1; transform: translateY(0); }/* Contenu principal */
+}
+
+/*TITRE*/
+.hero-title {
+  font-family: 'Great Vibes', cursive;/* Police choisit dans notre charte graphique pour les titres */
+  font-size: 8vw; /* Taille du texte */
+  text-align: center;/* Centré */
+  margin: 0;/* Pas de marge par défaut */
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.8);/* Ombre pour lisibilité sur le fond image*/
+  padding: 0 2%;
+}
+
+/*CONTENU (BLOCS présentation)*/
+.container { 
+  width: 90%; /* Largeur du bloc */
+  max-width: 1100px; /* Limite la largeur maximale des blocs*/
+  margin: 5% auto; /* Centré avec marge verticale */
+}
+
+.row {
+  display: flex;/* Pour aligner image et texte côte à côte*/
+  flex-direction: column; /* Empilé sur mobile */
+  margin-top: 3%;
+  margin-bottom: 5%;/*marge entre les blocs de présentation */
+  padding: 4%;/* Espace entre le bord des blocs et le contenu */
+  gap: 20px;/*écart entre image et texte */
+  border-radius: 15px;/*coins arrondis pour les blocs de présentation*/
+  background-color: var(--vert);/* Fond vert derrière le texte et les images */
+  max-width: 1000%; /* Limite la largeur maximale des blocs*/
+  transition: all 0.5s ease; /* Transition douce pour les effets au hover */
+  color : var(--beige);
+}
+.row:hover {
+  transform: translateY(-10px) scale(1.02); /* Mouvement haut + zoom */
+  border: 5px solid var(--rouge2);/* Ombre interne et externe pour un effet de profondeur */
+  box-shadow: 0 0 15px var(--rouge2), inset 0 0 5px var(--rouge2);/* Ombre interne et externe pour un effet de profondeur */
+  color : var(--beige);
+  background-color: var(--rouge);
+}
+
+.img-wrap img {
+  width: 100%;/* Largeur de l'image */
+  aspect-ratio: 4 / 3;/* Imposer le format 4:3, format qui correspond aux images de base*/
+  object-fit: cover;/* Remplit le cadre en coupant si nécessaire, l image s adapte à la place disponible */
+  border-radius: 10px;/* coins arrondis pour les images */
+  transition: all 0.5s ease; /* Transition douce pour les effets au hover */
+
+}
+.img-wrap:hover img {
+  transform: translateY(-10px) scale(1.02); /* Mouvement haut + zoom */
+  border: 5px solid var(--rouge2);/* Ombre interne et externe pour un effet de profondeur */
+  box-shadow: 0 0 15px var(--rouge2), inset 0 0 5px var(--rouge2);/* Ombre interne et externe pour un effet de profondeur */
+}
+
+.text-wrap {
+  display: flex;/* Pour centrer le texte verticalement */
+  flex-direction: column;/* Empile le texte en mettant le titre au dessus du texte descriptif */
+  justify-content: center;/*centre verticalement */
+  text-align: center;/*centre horizontalement */
+  transition: all 0.5s ease; /* Transition douce pour les effets au hover */
+}
+.text-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.5s ease;
+  padding: 20px;
+}
+
+/* Effet au survol du bloc */
+.text-wrap:hover {
+  transform: translateY(-10px) scale(1.02);
+}
+
+.text-wrap:hover h2 {/* L'effet néon appliqué aux lettres du titre */
+  color: var(--beige);
+  text-shadow: 
+    0 0 1px #fff,/* Coeur de la lettre blanc brillant */
+    0 0 0.5px var(--beige),/* Halo proche */
+    0 0 5px var(--beige); 
+}
+
+/* L'effet néon plus discret sur le texte descriptif */
+.text-wrap:hover p {
+  text-shadow: 
+    0 0 2.5px var(--beige),/* Halo proche */
+    0 0 2.5px var(--beige);
+}
+h2 { 
+  font-family: "Futura Light", sans-serif; 
+  letter-spacing: 0.15rem; 
+  margin: 0 0 1rem 0; 
+  font-size: 1.6rem;
+  text-align: center;/*centre horizontalement */
+}
+
+p { 
+  font-family: "Cormorant Garamond", serif; 
+  font-size: 1.25rem; 
+  line-height: 1.5; 
+  margin: 0;
+}
+
+/*CARROUSEL D'IMAGES*/
+.carousel-container {
+  width: 90%;/* Largeur du carrousel */
+  margin: 5%;
+  padding: 2%; /* écart par rapport à la bordure générale */
+  background: var(--vert);/* Fond derrière les images*/
+  border-radius: 15px; /* coins arrondis pour le bloc carrousel*/
+  overflow-x: auto; /*permet de faire glisser le contenu horizontalement */
+  scroll-snap-type: x mandatory; /* aligne les images proprement lors du scroll */
+  scrollbar-width: none;/* Cache la barre de défilement */
+}
+
+.carousel-container::-webkit-scrollbar { display: none; }
+
+/*ligne où sont posées les photos */
+.carousel-track {
+  display: flex; /* Force les images à se mettre côte à côte */
+  gap: 1%;      /* écart entre les images */
+}
+
+/*Chaque image du carrousel */
+.carousel-slide {
+  flex: 0 0 100%; /* Force chaque image à prendre 100% de la largeur du cadre */
+  display: flex;
+  justify-content: center;
+}
+
+.carousel-slide img {
+  width: 100%;/* Largeur de l'image */
+  height: auto; /* Hauteur automatique pour garder les proportions de base de l image*/
+  aspect-ratio: 1 / 1; /* Pour imposer le format carré*/
+  object-fit: cover;/* Remplit le cadre en coupant si nécessaire, l image s adapte à la place disponible */
+  border-radius: 10px; /* coins arrondis pour les images */
+  object-position: 5% center; /* recentre l image pour un meilleur cadrage et avoir les voitures au centre des images du caroussel */
+}
+/*FOOTER*/
+.footer {
+  background: var(--vert);/* Fond vert */
+  color: var(--beige);/* Texte beige */
+  padding: 30px 5%;
+  margin-top: 50px;
+  border-top-left-radius: 25px;/* Arrondi haut gauche */
+  border-top-right-radius: 25px;/* Arrondi haut droite */
+}
+
+.footer-container {
+  display: flex;/* Pour aligner le texte et le logo FB */
+  flex-direction: column;/* Empile les éléments sur mobile */
+  align-items: center; /* Centre les éléments horizontalement */
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-text-group {
+  display: flex;
+  flex-direction: column;/* Empile le texte*/
+  gap: 10px;
+  text-align: center;/* Centre le texte dans le footer */
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;/* Centre les liens horizontalement */
+  gap: 20px;/* écart entre les liens */
+}
+
+.footer-links a {
+  color: var(--beige);
+  text-decoration: none;
+}
+
+.fb-icon {
+  width: 45px;
+  height: auto;/* Garde les proportions de l image */
+  display: block;/* Pour éviter les espaces indésirables sous l image*/
+}
+
+
+/*VERSION ORDINATEUR/responsive */
+@media (min-width: 768px) {
+  .hero-title { font-size: 6rem; }
+  
+  .row { 
+    flex-direction: row; 
+    padding: 3%; 
+    gap: 4%;
+  }
+  
+  .img-wrap { flex: 45%; }
+  .text-wrap { flex: 55%; }
+
+  .logo img { height: 15vh; }
+
+h2 { 
+    font-size: 3rem; /* Au lieu de 1.6rem sur la version mobile */
+  }
+  p { 
+    font-size: 1.7rem; /* Au lieu de 1.25rem sur la version mobile*/
+  }
+  .carousel-slide {
+    flex: 0 0 33.33%; /* 100% de la largeur du bloc caroussel divisé en 3 photos */
+  }
+ .footer-container {
+    flex-direction: row;/* Aligne les blocs côte à côte */
+    justify-content: space-between; /* Pousse le texte à gauche et le FB à droite */
+    align-items: center;/* centre verticalement le logo et le texte */
+  }
+  .footer-text-group {
+    text-align: left; /* Aligne le texte à gauche sur PC */
+  }
+
+  .footer-links {
+    justify-content: flex-start;/*aligne à gauche*/
+  }
+  .footer p {
+    font-size: 1.2rem; 
+  }
+}
+
