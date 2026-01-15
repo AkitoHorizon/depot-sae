@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -10,9 +13,9 @@
 <style>
     .header {
         background: url('images/fondheader.JPG') no-repeat center 80% / cover;
-        border-bottom-left-radius: 25px;/* Arrondi bas gauche */
-        border-bottom-right-radius: 25px;/* Arrondi bas droite */
-        overflow: hidden;/* Pour éviter que les éléments débordent et le scroll horizontal */
+        border-bottom-left-radius: 25px;
+        border-bottom-right-radius: 25px;
+        overflow: hidden;
     }
 </style>
 <body>
@@ -23,21 +26,25 @@
         <input type="checkbox" id="menu-toggle" hidden>
         <label for="menu-toggle" class="burger">☰</label>
         <nav class="nav-menu">
-          <a href="index.html">Accueil</a>
-          <a href="manifestations.html">Manifestations</a>
-          <a href="ventes.html">Ventes</a>
-          <a href="contact.html">Contact</a>
+          <a href="index.php">Accueil</a>
+          <a href="manifestations.php">Manifestations</a>
+          <a href="ventes.php">Ventes</a>
+          <a href="contact.php">Contact</a>
           <hr class="menu-divider">
-          <a href="connexion.html">Connexion</a>
-          <a href="inscription.html">Inscription</a>
+          <?php if (isset($_SESSION['user_id'])): ?>
+            <a href="deconnexion.php">Déconnexion (<?php echo htmlspecialchars($_SESSION['user_prenom']); ?>)</a>
+          <?php else: ?>
+            <a href="connexion.php">Connexion</a>
+            <a href="inscription.php">Inscription</a>
+          <?php endif; ?>
         </nav>
       </div>
 
-      <a href="index.html" class="logo">
+      <a href="index.php" class="logo">
         <img src="images/logo.png" alt="Logo">
       </a>
 
-      <a href="contact.html" class="btn-accueil">ADHÉRER</a>
+      <a href="contact.php" class="btn-accueil">ADHÉRER</a>
     </div>
 
     <h1 class="hero-title">Les mécaniques anciennes du Haut-Lignon</h1>
@@ -61,7 +68,7 @@
       <div class="img-wrap"><img src="images/passion.jpg" alt="Passion"></div>
     </article>
 
-        <article class="row">
+    <article class="row">
       <div class="img-wrap"><img src="images/partage.jpg" alt="Partage"></div>
       <div class="text-wrap">
         <h2>PARTAGE</h2>
@@ -76,35 +83,37 @@
       </div>
       <div class="img-wrap"><img src="images/convivial.jpg" alt="Convivial"></div>
     </article>
+
     <section class="carousel-container">
-    <div class="carousel-track">
+      <div class="carousel-track">
         <div class="carousel-slide"><img src="images/1.jpg" alt="Photo 1"></div>
         <div class="carousel-slide"><img src="images/2.jpg" alt="Photo 2"></div>
         <div class="carousel-slide"><img src="images/3.jpg" alt="Photo 3"></div>
         <div class="carousel-slide"><img src="images/4.jpg" alt="Photo 4"></div>
         <div class="carousel-slide"><img src="images/5.jpg" alt="Photo 5"></div>
         <div class="carousel-slide"><img src="images/6.jpg" alt="Photo 6"></div>
-    </div>
+      </div>
     </section>
   </main>
+
   <footer class="footer">
-  <div class="footer-container">
-    
-    <div class="footer-text-group">
-      <div class="footer-links">
-        <a href="contact.html">Contact</a>
-        <a href="mentions.html">Mentions</a>
+    <div class="footer-container">
+      
+      <div class="footer-text-group">
+        <div class="footer-links">
+          <a href="contact.php">Contact</a>
+          <a href="mentions.php">Mentions</a>
+        </div>
+        <p class="copyright">&copy; 2026 Les Mécaniques Anciennes du Haut-Lignon</p>
       </div>
-      <p class="copyright">&copy; 2026 Les Mécaniques Anciennes du Haut-Lignon</p>
-    </div>
 
-    <div class="footer-social">
-      <a href="https://www.facebook.com/people/Les-M%C3%A9caniques-Anciennes-du-Haut-Lignon/100055948035657/?epa=SEARCH_BOX#" target="_blank">
-        <img src="images/logofb.png" alt="Facebook" class="fb-icon">
-      </a>
-    </div>
+      <div class="footer-social">
+        <a href="https://www.facebook.com/people/Les-M%C3%A9caniques-Anciennes-du-Haut-Lignon/100055948035657/?epa=SEARCH_BOX#" target="_blank">
+          <img src="images/logofb.png" alt="Facebook" class="fb-icon">
+        </a>
+      </div>
 
-  </div>
-</footer>
+    </div>
+  </footer>
 </body>
 </html>

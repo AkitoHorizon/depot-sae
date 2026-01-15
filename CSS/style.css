@@ -359,3 +359,11 @@ h2 {
   }
 }
 
+/* Séparateur dans le menu */
+.menu-divider {
+  border: none;
+  border-top: 2px solid var(--marron);
+  margin: 0.5rem 0;
+  opacity: 0.5;
+}
+
