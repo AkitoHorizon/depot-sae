@@ -478,9 +478,6 @@ p {
     justify-content: space-between;
   }
 }
-Voici tes media queries commentées ligne par ligne pour bien comprendre comment ton site s'adapte aux ordinateurs (écrans de plus de 900px).
-
-CSS
 
 /* =========================================
    VERSION ORDINATEUR (S'active au-dessus de 900px)
