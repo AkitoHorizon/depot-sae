@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Les Mécaniques Anciennes du Haut-Lignon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="CSS/style.css">
+</head>
+<style>
+    .header {
+        background: url('images/fondheader1.JPG') no-repeat center 70% / cover;
+        border-bottom-left-radius: 25px;/* Arrondi bas gauche */
+        border-bottom-right-radius: 25px;/* Arrondi bas droite */
+        overflow: hidden;/* Pour éviter que les éléments débordent et le scroll horizontal */
+    }
+</style>
+<body>
+
+  <header class="header">
+    <div class="top-bar">
+      <div class="menu-box">
+        <input type="checkbox" id="menu-toggle" hidden>
+        <label for="menu-toggle" class="burger">☰</label>
+        <nav class="nav-menu">
+          <a href="index.html">Accueil</a>
+          <a href="manifestations.html">Manifestations</a>
+          <a href="ventes.html">Ventes</a>
+          <a href="contact.html">Contact</a>
+        </nav>
+      </div>
+
+      <a href="index.html" class="logo">
+        <img src="images/logo.png" alt="Logo">
+      </a>
+
+      <a href="index.html" class="btn-accueil">ACCUEIL</a>
+    </div>
+
+    <h1 class="hero-title">Les mécaniques anciennes du Haut-Lignon</h1>
+  </header>
+
+<main class="container contact-container"> <article class="row">
+    <div class="text-wrap">
+      <h2>Formulaire de contact</h2>
+      <!---formulaire de contact php-->
+    </div>
+  </article>
+  
+  <article class="row">
+    <div class="text-wrap">
+      <h2>Formulaire d'adhesion</h2>
+       <!---formulaire d'adhesion php-->
+      </div>
+  </article>
+</main>
+
+  <footer class="footer">
+  <div class="footer-container">
+    
+    <div class="footer-text-group">
+      <div class="footer-links">
+        <a href="contact.html">Contact</a>
+        <a href="mentions.html">Mentions</a>
+      </div>
+      <p class="copyright">&copy; 2026 Les Mécaniques Anciennes du Haut-Lignon</p>
+    </div>
+
+    <div class="footer-social">
+      <a href="https://www.facebook.com/people/Les-M%C3%A9caniques-Anciennes-du-Haut-Lignon/100055948035657/?epa=SEARCH_BOX#" target="_blank">
+        <img src="images/logofb.png" alt="Facebook" class="fb-icon">
+      </a>
+    </div>
+
+  </div>
+</footer>
+</body>
+</html>
