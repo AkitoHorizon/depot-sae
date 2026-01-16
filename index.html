@@ -3,107 +3,165 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Les Mécaniques Anciennes du Haut-Lignon</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Great+Vibes&display=swap" rel="stylesheet">
+  <title>Les Mécaniques Anciennes | Haut-Lignon</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="CSS/style.css">
 </head>
-<!-- Styles spécifiques à l'accueil afin d'éviter la répétition de classe -->
-<style>
-    .header {
-        background: url('images/fondheader.JPG') no-repeat center 60% / cover;
-        border-bottom-left-radius: 5px;/* Arrondi bas gauche */
-        border-bottom-right-radius: 5px;/* Arrondi bas droite */
-        overflow: hidden;/* Pour éviter que les éléments débordent et le scroll horizontal */
-        height: 920px;
-    }
-</style>
+
 <body>
+  <div class="noise-overlay"></div>
 
-  <header class="header"> 
-    <div class="top-bar">
-      <div class="menu-box">
-        <input type="checkbox" id="menu-toggle" hidden>
-        <label for="menu-toggle" class="burger">☰</label>
-        <nav class="nav-menu">
-          <a href="index.html">Accueil</a>
-          <a href="manifestations.html">Manifestations</a>
-          <a href="ventes.html">Ventes</a>
-          <a href="contact.html">Contact</a>
-        </nav>
-      </div>
-
+  <nav class="navbar">
+    <div class="nav-container">
       <a href="index.html" class="logo">
-        <img src="images/logo.png" alt="Logo">
+        <img src="images/logo.png" alt="Logo" width="75" height="75">
+        <span class="logo-text">LA PASSION <span class="highlight">AUTOMOBILE</span></span>
       </a>
+      
+      <div class="menu-wrap">
+        <input type="checkbox" id="menu-toggle" hidden>
+        <label for="menu-toggle" class="burger" aria-label="Menu">
+            <span class="line top"></span>
+            <span class="line bottom"></span>
+        </label>
+        
+        <div class="menu-overlay">
+          <svg class="bg-motif" viewBox="0 0 200 60" fill="none" aria-hidden="true">
+            <path d="M40 50C25 50 15 38 15 25C15 12 25 0 40 0C32 0 25 8 25 25C25 42 32 50 40 50Z" fill="currentColor"/>
+            <path d="M100 50C85 50 75 38 75 25C75 12 85 0 100 0C92 0 85 8 85 25C85 42 92 50 100 50Z" fill="currentColor"/>
+            <path d="M160 50C145 50 135 38 135 25C135 12 145 0 160 0C152 0 145 8 145 25C145 42 152 50 160 50Z" fill="currentColor"/>
+          </svg>
 
-      <a href="contact.html" class="btn-accueil">ADHÉRER</a>
+          <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="manifestations.html">Manifestations</a></li>
+            <li><a href="ventes.html">Ventes</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li class="mobile-only"><a href="contact.html" class="btn-menu-member">Devenir Membre</a></li>
+          </ul>
+        </div>
+      </div>
     </div>
+  </nav>
 
-    <h1 class="hero-title">Les mécaniques anciennes du Haut-Lignon</h1>
-    <h2>Venez partager votre passion avec nous</h2>
+  <header class="header">
+    <div class="header-overlay"></div>
+    <div class="hero-content">
+      <p class="pre-title">Est. 2026 — Haut-Lignon</p>
+      <h1 class="hero-title">
+        <span class="line">Mécaniques</span>
+        <span class="line indent">Anciennes</span>
+      </h1>
+      <div class="scroll-down">
+        <span>Découvrir</span>
+        <div class="vertical-line"></div>
+      </div>
+      <div class="emblem-container">
+        <svg class="emblem" viewBox="0 0 200 60" fill="none" aria-hidden="true">
+            <path d="M40 50C25 50 15 38 15 25C15 12 25 0 40 0C32 0 25 8 25 25C25 42 32 50 40 50Z" fill="currentColor"/>
+            <path d="M100 50C85 50 75 38 75 25C75 12 85 0 100 0C92 0 85 8 85 25C85 42 92 50 100 50Z" fill="currentColor"/>
+            <path d="M160 50C145 50 135 38 135 25C135 12 145 0 160 0C152 0 145 8 145 25C145 42 152 50 160 50Z" fill="currentColor"/>
+        </svg>
+      </div>
+    </div>
   </header>
 
   <main class="container">
-    <article class="row">
-      <div class="img-wrap"><img src="images/qui.jpg" alt="QUI SOMMES-NOUS"></div>
-      <div class="text-wrap">
-        <h2>QUI SOMMES-NOUS</h2>
-        <p>Association de collectionneur, nous nous rejoignons lors de manifestations pour partager des moments autour de notre passion.</p>
+    
+    <article class="row reveal style-1">
+      <div class="img-frame">
+        <img src="images/qui.jpg" alt="Collectionneurs" loading="lazy" decoding="async">
+      </div>
+      <div class="text-content">
+        <span class="chapter">01</span>
+        <h2>L'Art de la <br><i>Collection</i></h2>
+        <p>Gardiens du temps, nous préservons l'âme des ingénieurs d'autrefois. Notre association est un cercle privé où l'histoire automobile continue de s'écrire.</p>
       </div>
     </article>
     
-    <article class="row">
-      <div class="text-wrap">
-        <h2>PASSION</h2>
-        <p>Notre passion pour les mécaniques anciennes nous unit et nous rassemblent régulièrement.</p>
+    <article class="row reveal style-2">
+      <div class="img-frame">
+        <img src="images/passion.jpg" alt="Passion" loading="lazy" decoding="async">
       </div>
-      <div class="img-wrap"><img src="images/passion.jpg" alt="Passion"></div>
-    </article>
-
-        <article class="row">
-      <div class="img-wrap"><img src="images/partage.jpg" alt="Partage"></div>
-      <div class="text-wrap">
-        <h2>PARTAGE</h2>
-        <p>Nous aimons partager nos connaissances et nos découvertes de manière conviviale lors de nos manifestations.</p>
+      <div class="text-content">
+        <span class="chapter">02</span>
+        <h2>Passion <br><i>Intemporelle</i></h2>
+        <p>Le vrombissement d'un moteur, l'odeur du cuir patiné. Cette passion viscérale pour la mécanique ancienne est le lien indéfectible qui unit nos membres.</p>
       </div>
     </article>
 
-    <article class="row">
-      <div class="text-wrap">
-        <h2>CONVIVIAL</h2>
-        <p>Les manifestations nous permettent de partager nos connaissances et nos découvertes de manière conviviale.</p>
+    <article class="row reveal style-3">
+      <div class="img-frame">
+        <img src="images/partage.jpg" alt="Partage" loading="lazy" decoding="async">
       </div>
-      <div class="img-wrap"><img src="images/convivial.jpg" alt="Convivial"></div>
+      <div class="text-content">
+        <span class="chapter">03</span>
+        <h2>Héritage & <br><i>Partage</i></h2>
+        <p>Transmettre le flambeau. Lors de nos manifestations, nous ouvrons nos capots pour partager savoir-faire technique et anecdotes historiques.</p>
+      </div>
     </article>
-    <section class="carousel-container">
-    <div class="carousel-track">
-        <div class="carousel-slide"><img src="images/1.jpg" alt="Photo 1"></div>
-        <div class="carousel-slide"><img src="images/2.jpg" alt="Photo 2"></div>
-        <div class="carousel-slide"><img src="images/3.jpg" alt="Photo 3"></div>
-        <div class="carousel-slide"><img src="images/4.jpg" alt="Photo 4"></div>
-        <div class="carousel-slide"><img src="images/5.jpg" alt="Photo 5"></div>
-        <div class="carousel-slide"><img src="images/6.jpg" alt="Photo 6"></div>
-    </div>
-    </section>
+
+    <article class="row reveal style-4">
+      <div class="img-frame">
+        <img src="images/convivial.jpg" alt="Convivialité" loading="lazy" decoding="async">
+      </div>
+      <div class="text-content">
+        <span class="chapter">04</span>
+        <h2>L'Esprit <br><i>Convivial</i></h2>
+        <p>Au cœur du Haut-Lignon, la mécanique est un prétexte aux rencontres humaines. Gastronomie et patrimoine se mêlent dans une ambiance chaleureuse.</p>
+      </div>
+    </article>
+
   </main>
-  <footer class="footer">
-  <div class="footer-container">
-    
-    <div class="footer-text-group">
-      <div class="footer-links">
-        <a href="contact.html">Contact</a>
-        <a href="mentions.html">Mentions</a>
+
+  <section class="gallery-section reveal">
+    <div class="marquee">
+      <div class="marquee-content">
+          <img src="images/1.jpg" alt="Col." loading="lazy"><img src="images/2.jpg" alt="Col." loading="lazy"><img src="images/3.jpg" alt="Col." loading="lazy">
+          <img src="images/4.jpg" alt="Col." loading="lazy"><img src="images/5.jpg" alt="Col." loading="lazy"><img src="images/6.jpg" alt="Col." loading="lazy">
+          <img src="images/1.jpg" alt="Col." loading="lazy"><img src="images/2.jpg" alt="Col." loading="lazy"><img src="images/3.jpg" alt="Col." loading="lazy">
+          <img src="images/4.jpg" alt="Col." loading="lazy"><img src="images/5.jpg" alt="Col." loading="lazy"><img src="images/6.jpg" alt="Col." loading="lazy">
       </div>
-      <p class="copyright">&copy; 2026 Les Mécaniques Anciennes du Haut-Lignon</p>
     </div>
+  </section>
 
-    <div class="footer-social">
-      <a href="https://www.facebook.com/people/Les-M%C3%A9caniques-Anciennes-du-Haut-Lignon/100055948035657/?epa=SEARCH_BOX#" target="_blank">
-        <img src="images/logofb.png" alt="Facebook" class="fb-icon">
-      </a>
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h4>Mécaniques Anciennes</h4>
+        <svg class="emblem-mini" viewBox="0 0 200 60" fill="none" aria-hidden="true">
+            <path d="M40 50C25 50 15 38 15 25C15 12 25 0 40 0C32 0 25 8 25 25C25 42 32 50 40 50Z" fill="currentColor"/>
+            <path d="M100 50C85 50 75 38 75 25C75 12 85 0 100 0C92 0 85 8 85 25C85 42 92 50 100 50Z" fill="currentColor"/>
+            <path d="M160 50C145 50 135 38 135 25C135 12 145 0 160 0C152 0 145 8 145 25C145 42 152 50 160 50Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="footer-links">
+        <a href="contact.html">Devenir Membre</a>
+        <a href="mentions.html">Mentions Légales</a>
+        <a href="https://www.facebook.com/" target="_blank" class="fb-link">Facebook</a>
+      </div>
     </div>
+    <div class="copyright">
+      &copy; 2026 Tous droits réservés.
+    </div>
+  </footer>
 
-  </div>
-</footer>
+  <script>
+    // Optimisation de l'observateur pour ne pas surcharger le thread
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          obs.unobserve(entry.target); // On arrête d'observer une fois affiché (gain perf)
+        }
+      });
+    }, { threshold: 0.1 });
+    
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>
