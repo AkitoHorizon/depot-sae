@@ -10,7 +10,7 @@ final class DB
             return self::$pdo;
         }
 
-        $cfg = require __DIR__ . 'back/config/config.php';
+        $cfg = require __DIR__ . '/config/config.php';
         $dsn = "mysql:host={$cfg['host']};dbname={$cfg['db']};charset={$cfg['charset']}";
 
         self::$pdo = new PDO($dsn, $cfg['user'], $cfg['pass'], [
@@ -22,3 +22,4 @@ final class DB
         return self::$pdo;
     }
 }
+
