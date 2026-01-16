@@ -5,8 +5,17 @@
   --vert: #45462A;    
   --rouge-vif: #74070E; 
   --easing: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Définition des variables de couleurs pour une modification facile dans tout le site */
+  --rouge: #310E10;   
+  --beige: #F4E3B2;   
+  --vert: #45462A;    
+  --vert-transp: rgba(69, 70, 42, 0.9);
+  --white: #ffffff;
+  --rouge2: #74070E;  
 }
 
+/* Applique le box-sizing à tous les éléments pour que padding/border n'augmentent pas la taille définie */
 * { box-sizing: border-box; }
 
 body { 
@@ -14,6 +23,12 @@ body {
   background-color: var(--beige); 
   color: var(--rouge);
   font-family: 'Montserrat', sans-serif; 
+
+  margin: 0; /* Supprime les marges par défaut du navigateur */
+  background: var(--beige); /* Applique la couleur de fond beige */
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+  color: var(--rouge); /* Couleur de texte par défaut */
+  font-size: 16px;
   overflow-x: hidden;
   position: relative; /* Nécessaire pour le pseudo-élément fixe */
 }
@@ -52,6 +67,48 @@ body::before {
 .logo-text {
   font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--beige); 
   text-transform: uppercase; letter-spacing: 2px; font-weight: 300; display: none; 
+
+  /* Fixed permet de passer au-dessus de presque tout plus facilement */
+  position: fixed; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 250px; /* Un peu plus haut pour que la transition soit douce */
+  
+  /* Noir à 50% d'opacité pour que ce soit bien visible sur l'image */
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, transparent 100%);
+  
+  /* On met le paquet sur le z-index */
+  z-index: 99999; 
+  
+  /* Indispensable pour pouvoir cliquer sur les boutons/liens sous le dégradé */
+  pointer-events: none; 
+  overflow-x: hidden; /* Empêche le défilement horizontal (évite les bugs visuels) */
+}
+
+/* --- HEADER --- */
+.header {
+  position: relative;
+  height: 70vh; /* 70% de la hauteur de l'écran */
+  min-height: 500px;
+  display: flex;
+  flex-direction: column; /* Aligne les éléments verticalement */
+  justify-content: space-between; /* Espace le contenu */
+  padding: 2% 0 5%;
+  color: var(--beige);
+}
+
+.header h1, .header h2 {
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5); /* Ajoute une ombre portée pour la lisibilité */
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between; /* Logo au centre, burger/bouton aux extrémités*/
+  align-items: center;
+  padding: 0 5%;
+  position: relative;
+  z-index: 2000; /* Assure que la barre reste au-dessus du reste */
 }
 .logo-text .highlight { color: #fff; font-weight: 600; }
 
@@ -150,6 +207,133 @@ body::before {
 /* --- CONTENU DE BASE --- */
 .container { max-width: 1400px; margin: 0 auto; padding: 120px 20px; }
 
+
+/* LOGO */
+.logo {
+  display: flex;
+  justify-content: center;
+  flex: 1; /* Prend tout l'espace disponible pour centrer l'image */
+}
+
+.logo img { 
+  height: 14vh; 
+  width: auto;
+  filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3)); /* Ombre derrière le logo */
+}
+
+/* BOUTONS & BURGER */
+.burger {
+  background: var(--rouge2); 
+  border: 1px solid var(--beige); 
+  padding: 10px 15px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--beige);
+  transition: 0.3s; /* Transition douce pour le hover */
+}
+
+.burger:hover { background: var(--beige); color: var(--rouge); }
+
+.btn-accueil {
+  background: var(--rouge2);
+  color: var(--beige);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 10px 25px;
+  border: 1px solid var(--beige); 
+  font-size: 0.9rem;
+  letter-spacing: 2px; 
+  text-transform: uppercase;
+  transition: all 0.5s ease;
+}
+
+.btn-accueil:hover {
+  background: var(--beige);
+  color: var(--rouge);
+  box-shadow: 5px 5px 0px rgba(0,0,0,0.2); /* Ombre plate au survol */
+}
+
+/* MENU DÉROULANT */
+.menu-box { position: relative; } /* Parent pour positionner le menu absolu */
+
+.nav-menu {
+  display: none; /* Masqué par défaut */
+  position: absolute;
+  top: 150%;
+  left: 0;
+  width: 300px;
+  background: var(--rouge); 
+  border: 1px solid var(--beige);
+  padding: 20px 0;
+  z-index: 3000;
+  box-shadow: 10px 10px 0px rgba(0,0,0,0.2); 
+}
+
+.nav-menu a {
+  display: block;
+  padding: 15px 30px;
+  color: var(--beige);
+  text-decoration: none;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(244, 227, 178, 0.1); /* Ligne de séparation discrète */
+  transition: 0.4s;
+}
+
+.nav-menu a:hover {
+  padding-left: 40px; /* Décalage vers la droite au survol */
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+}
+
+/* Affiche le menu quand la checkbox masquée est cochée */
+#menu-toggle:checked ~ .nav-menu {
+  display: block;
+  animation: fadeIn 0.5s ease-out; /* Animation d'apparition */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* TYPOGRAPHIE */
+.hero-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: 7vw; /* Taille basée sur la largeur de l'écran */
+  text-align: center;
+  margin: 0;
+  font-weight: 400;
+}
+
+h2 { 
+  font-family: "Futura Light", sans-serif; 
+  text-transform: uppercase; 
+  letter-spacing: 0.3rem; 
+  margin: 0 0 1.5rem 0; 
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: var(--beige);
+}
+
+p { 
+  font-family: "Cormorant Garamond", serif; 
+  font-size: 1.3rem; 
+  line-height: 1.8; /* Espace entre les lignes pour le confort de lecture */
+  font-weight: 400; 
+  color: var(--beige); 
+}
+
+/* CONTENU : STRUCTURE */
+.container {
+  width: 90%; 
+  max-width: 1400px; 
+  margin: 8% auto; 
+}
+
+/* LE BLOC GLOBAL */
 .row {
   display: flex; flex-direction: column; margin-bottom: 200px;
   opacity: 0; transform: translateY(50px); transition: 1s ease-out;
@@ -325,3 +509,265 @@ p { font-size: 1rem; line-height: 1.8; opacity: 0.9; }
 /* --- METTRE EN MOBIL FIRST --- */
 /* --- RÉGLER L'ANIMATION DU MENU DÉROULANT --- */
 /* --- OPTIMISER --- */
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+}
+
+.footer-links a {
+  color: var(--beige);
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  transition: 0.3s;
+}
+.footer-links a:hover { opacity: 1; }
+
+.fb-icon { width: 40px; opacity: 0.8; transition: 0.3s; }
+.fb-icon:hover { opacity: 1; transform: scale(1.1); }
+
+
+/* =========================================
+   VERSION ORDINATEUR (CORRECTIF POUR TON HTML)
+   ========================================= */
+@media (min-width: 900px) {
+  
+  .hero-title { font-size: 6rem; }
+
+  /* ON UTILISE L'ORDRE NATUREL DU HTML (pas d'inversion auto) */
+  .row { 
+    flex-direction: row; 
+    align-items: center;
+    justify-content: space-between; 
+  }
+
+  /* 1. LIGNES IMPAIRES (1 et 3 : Qui sommes nous / Partage) */
+  /* Ton HTML est : Image d'abord, Texte ensuite */
+  /* Résultat : Image à Gauche, Texte à Droite */
+  .row:nth-child(odd) {
+    justify-content: flex-start;
+  }
+  
+  .row:nth-child(odd) .img-wrap {
+    width: 65%; 
+  }
+  
+  .row:nth-child(odd) .text-wrap {
+    width: 40%;
+    margin-top: 0;
+    margin-left: -10%; /* Le texte mord sur l'image à GAUCHE */
+    text-align: left;
+    padding: 60px;
+  }
+  .row:nth-child(odd) .text-wrap h2::after { margin: 15px 0 0 0; }
+
+
+  /* 2. LIGNES PAIRES (2 et 4 : Passion / Convivial) */
+  /* Ton HTML est : Texte d'abord, Image ensuite */
+  /* Résultat : Texte à Gauche, Image à Droite (C'EST CE QUE TU VEUX) */
+  .row:nth-child(even) {
+    /* Pas de flex-reverse ici, on garde ton ordre HTML */
+    justify-content: flex-end; 
+  }
+
+  .row:nth-child(even) .img-wrap {
+    width: 65%;
+  }
+
+  .row:nth-child(even) .text-wrap {
+    width: 40%;
+    margin-top: 0;
+    margin-right: -10%; /* Le texte mord sur l'image à DROITE */
+    text-align: right; 
+    padding: 60px;
+  }
+  .row:nth-child(even) .text-wrap h2::after { margin: 15px 0 0 auto; }
+
+  
+  /* PAGE CONTACT */
+  .contact-container .row { display: block; }
+  .contact-container .text-wrap { 
+    width: 60%; 
+    margin: 0 auto; 
+    text-align: center;
+  }
+  .contact-container .text-wrap h2::after { margin: 15px auto; }
+
+  /* CARROUSEL */
+  .carousel-slide { flex: 0 0 25%; } 
+  
+  /* FOOTER */
+  .footer-container {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.fb-icon { width: 40px; opacity: 0.8; transition: 0.3s; }
+.fb-icon:hover { opacity: 1; transform: scale(1.1); }
+
+
+/* =========================================
+   VERSION ORDINATEUR (CORRECTIF POUR TON HTML)
+   ========================================= */
+@media (min-width: 900px) {
+  
+  .hero-title { font-size: 6rem; }
+
+  /* ON UTILISE L'ORDRE NATUREL DU HTML (pas d'inversion auto) */
+  .row { 
+    flex-direction: row; 
+    align-items: center;
+    justify-content: space-between; 
+  }
+
+  /* 1. LIGNES IMPAIRES (1 et 3 : Qui sommes nous / Partage) */
+  /* Ton HTML est : Image d'abord, Texte ensuite */
+  /* Résultat : Image à Gauche, Texte à Droite */
+  .row:nth-child(odd) {
+    justify-content: flex-start;
+  }
+  
+  .row:nth-child(odd) .img-wrap {
+    width: 65%; 
+  }
+  
+  .row:nth-child(odd) .text-wrap {
+    width: 40%;
+    margin-top: 0;
+    margin-left: -10%; /* Le texte mord sur l'image à GAUCHE */
+    text-align: left;
+    padding: 60px;
+  }
+  .row:nth-child(odd) .text-wrap h2::after { margin: 15px 0 0 0; }
+
+
+  /* 2. LIGNES PAIRES (2 et 4 : Passion / Convivial) */
+  /* Ton HTML est : Texte d'abord, Image ensuite */
+  /* Résultat : Texte à Gauche, Image à Droite (C'EST CE QUE TU VEUX) */
+  .row:nth-child(even) {
+    /* Pas de flex-reverse ici, on garde ton ordre HTML */
+    justify-content: flex-end; 
+  }
+
+  .row:nth-child(even) .img-wrap {
+    width: 65%;
+  }
+
+  .row:nth-child(even) .text-wrap {
+    width: 40%;
+    margin-top: 0;
+    margin-right: -10%; /* Le texte mord sur l'image à DROITE */
+    text-align: right; 
+    padding: 60px;
+  }
+  .row:nth-child(even) .text-wrap h2::after { margin: 15px 0 0 auto; }
+
+  
+  /* PAGE CONTACT */
+  .contact-container .row { display: block; }
+  .contact-container .text-wrap { 
+    width: 60%; 
+    margin: 0 auto; 
+    text-align: center;
+  }
+  .contact-container .text-wrap h2::after { margin: 15px auto; }
+
+  /* CARROUSEL */
+  .carousel-slide { flex: 0 0 25%; } 
+  
+  /* FOOTER */
+  .footer-container {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+/* =========================================
+   VERSION ORDINATEUR (S'active au-dessus de 900px)
+   ========================================= */
+@media (min-width: 900px) {
+  
+  /* Agrandit le titre principal sur grand écran */
+  .hero-title { font-size: 6rem; }
+
+  /* Change l'empilement vertical en ligne horizontale pour l'image et le texte */
+  .row { 
+    flex-direction: row; 
+    align-items: center;
+    justify-content: space-between; 
+  }
+
+  /* --- 1. LIGNES IMPAIRES (Bloc 1 et 3) --- */
+  /* Aligne le contenu au début du flex (gauche) */
+  .row:nth-child(odd) {
+    justify-content: flex-start;
+  }
+  
+  /* L'image prend 65% de la largeur à gauche */
+  .row:nth-child(odd) .img-wrap {
+    width: 65%; 
+  }
+  
+  /* Le bloc texte prend 40% et vient mordre sur l'image à gauche */
+  .row:nth-child(odd) .text-wrap {
+    width: 40%;
+    margin-top: 0; /* Supprime le décalage mobile */
+    margin-left: -10%; /* Effet de chevauchement sur l'image */
+    text-align: left; /* Aligne le texte à gauche */
+    padding: 60px;
+  }
+
+  /* Aligne la petite barre rouge du titre à gauche */
+  .row:nth-child(odd) .text-wrap h2::after { margin: 15px 0 0 0; }
+
+
+  /* --- 2. LIGNES PAIRES (Bloc 2 et 4) --- */
+  /* Aligne le contenu à la fin du flex (droite) */
+  .row:nth-child(even) {
+    justify-content: flex-end; 
+  }
+
+  /* L'image prend 65% de la largeur à droite */
+  .row:nth-child(even) .img-wrap {
+    width: 65%;
+  }
+
+  /* Le bloc texte prend 40% et vient mordre sur l'image à droite */
+  .row:nth-child(even) .text-wrap {
+    width: 40%;
+    margin-top: 0;
+    margin-right: -10%; /* Effet de chevauchement sur l'image */
+    text-align: right; /* Aligne le texte à droite */
+    padding: 60px;
+  }
+
+  /* Aligne la petite barre rouge du titre à droite */
+  .row:nth-child(even) .text-wrap h2::after { margin: 15px 0 0 auto; }
+
+  
+  /* --- PAGE CONTACT --- */
+  /* Annule le flex pour que le formulaire reste centré */
+  .contact-container .row { display: block; }
+  .contact-container .text-wrap { 
+    width: 60%; 
+    margin: 0 auto; 
+    text-align: center;
+  }
+  /* Centre la barre décorative du titre contact */
+  .contact-container .text-wrap h2::after { margin: 15px auto; }
+
+  /* --- CARROUSEL --- */
+  /* Affiche 4 images par ligne sur PC (100% / 4 = 25%) */
+  .carousel-slide { flex: 0 0 25%; } 
+  
+  /* --- FOOTER --- */
+  /* Aligne les éléments du footer horizontalement */
+  .footer-container {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
