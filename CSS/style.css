@@ -18,8 +18,23 @@ body {
   color: var(--rouge); /* Couleur de texte par défaut */
   font-size: 16px;
   overflow-x: hidden; /* Empêche le défilement horizontal (évite les bugs visuels) */
+  position: relative; /* Indispensable pour positionner le fond par rapport au corps */
+  min-height: 100vh; /* Garantit que le corps occupe au moins toute la hauteur de l'écran */
 }
 
+body::before {
+  content: "";
+  position: absolute; /* L'image suit lors du scroll */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Place l'image derrière tout le contenu */
+  background: url('../images/routerougefondbody.png') no-repeat center center;
+  background-size: cover; /* L'image couvre tout l'écran */
+  opacity: 1; /*1.0 pour opaque */
+  background-position: center;
+}
 /* --- HEADER --- */
 .header {
   position: relative;
