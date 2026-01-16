@@ -17,6 +17,28 @@ body {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
   color: var(--rouge); /* Couleur de texte par défaut */
   font-size: 16px;
+  overflow-x: hidden;
+  /* On s'assure que le body est le référent pour le dégradé */
+  position: relative; 
+}
+
+body::before {
+  content: "";
+  /* Fixed permet de passer au-dessus de presque tout plus facilement */
+  position: fixed; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 250px; /* Un peu plus haut pour que la transition soit douce */
+  
+  /* Noir à 50% d'opacité pour que ce soit bien visible sur l'image */
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, transparent 100%);
+  
+  /* On met le paquet sur le z-index */
+  z-index: 99999; 
+  
+  /* Indispensable pour pouvoir cliquer sur les boutons/liens sous le dégradé */
+  pointer-events: none; 
   overflow-x: hidden; /* Empêche le défilement horizontal (évite les bugs visuels) */
   position: relative; /* Indispensable pour positionner le fond par rapport au corps */
   min-height: 100vh; /* Garantit que le corps occupe au moins toute la hauteur de l'écran */
@@ -83,6 +105,7 @@ body::before {
   color: var(--beige);
   transition: 0.3s; /* Transition douce pour le hover */
 }
+
 .burger:hover { background: var(--beige); color: var(--rouge); }
 
 .btn-accueil {
