@@ -8,7 +8,7 @@ $pdo = DB::pdo();
 
 $userId = isset($_SESSION['id_user']) ? (int)$_SESSION['id_user'] : null;
 
-//  CSRF simple 
+//  CSRF simpleggg
 if (empty($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(16));
 }
