@@ -21,7 +21,7 @@ foreach ($rows as $r) {
         'date' => date('d/m/Y', strtotime($r['date_debut'])),
         'desc' => $r['description'] ?: ($r['type_vehicules'] ?: ''),
         'pos'  => [(float)$r['latitude'], (float)$r['longitude']],
-        // icon sera choisi côté JS
+        
     ];
 }
 ?>
