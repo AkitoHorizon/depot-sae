@@ -117,14 +117,69 @@
 
   </main>
 
-  <section class="gallery-section reveal">
-    <div class="marquee">
-      <div class="marquee-content">
-          <img src="images/1.jpg" alt="Col." loading="lazy"><img src="images/2.jpg" alt="Col." loading="lazy"><img src="images/3.jpg" alt="Col." loading="lazy">
-          <img src="images/4.jpg" alt="Col." loading="lazy"><img src="images/5.jpg" alt="Col." loading="lazy"><img src="images/6.jpg" alt="Col." loading="lazy">
-          <img src="images/1.jpg" alt="Col." loading="lazy"><img src="images/2.jpg" alt="Col." loading="lazy"><img src="images/3.jpg" alt="Col." loading="lazy">
-          <img src="images/4.jpg" alt="Col." loading="lazy"><img src="images/5.jpg" alt="Col." loading="lazy"><img src="images/6.jpg" alt="Col." loading="lazy">
+<section class="gallery-section reveal">
+    <div class="align-wrapper">
+        <h2 class="gallery-title">Quelques images <br> de nos manifestations</h2>
+        <div class="carousel-container">
+           </div>
+     
+      <input type="radio" name="slider" id="slide-1" checked>
+      <input type="radio" name="slider" id="slide-2">
+      <input type="radio" name="slider" id="slide-3">
+      <input type="radio" name="slider" id="slide-4">
+
+      <div class="carousel-track">
+        <div class="slide">
+          <img src="images/1.jpg" alt="Collection 1">
+        </div>
+        <div class="slide">
+          <img src="images/2.jpg" alt="Collection 2">
+        </div>
+        <div class="slide">
+          <img src="images/3.jpg" alt="Collection 3">
+        </div>
+        <div class="slide">
+          <img src="images/4.jpg" alt="Collection 4">
+        </div>
       </div>
+
+      <div class="carousel-arrows">
+        <label for="slide-4" class="arrow prev control-1">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </label>
+        <label for="slide-2" class="arrow next control-1">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </label>
+
+        <label for="slide-1" class="arrow prev control-2">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </label>
+        <label for="slide-3" class="arrow next control-2">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </label>
+
+        <label for="slide-2" class="arrow prev control-3">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </label>
+        <label for="slide-4" class="arrow next control-3">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </label>
+
+        <label for="slide-3" class="arrow prev control-4">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </label>
+        <label for="slide-1" class="arrow next control-4">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </label>
+      </div>
+
+      <div class="carousel-dots">
+        <label for="slide-1" class="dot" id="dot-1"></label>
+        <label for="slide-2" class="dot" id="dot-2"></label>
+        <label for="slide-3" class="dot" id="dot-3"></label>
+        <label for="slide-4" class="dot" id="dot-4"></label>
+      </div>
+
     </div>
   </section>
 
