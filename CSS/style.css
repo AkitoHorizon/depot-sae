@@ -44,16 +44,17 @@ body::before {
 }
 body::after {
   content: ""; 
-  position: absolute; /* L'image suit lors du scroll */ 
-  top: 2.5%; 
+  position: absolute; 
+  top: 0; 
   left: 0; 
   width: 100%; 
-  height: 100%; 
-  z-index: -1000;/*Place l'image derrière tout le contenu */ 
-  background: url('../images/routerougefondbody.png') no-repeat center center; 
-  background-size: cover; /* L'image couvre tout l'écran */ 
-  opacity: 1; /*1.0 pour opaque */ 
-  background-position: center; }
+  height: 100%; /* S'assure que la route couvre TOUTE la hauteur calculée */
+  z-index: -1000;
+  background: url('../images/routerougefondbody.png') no-repeat center top; 
+  background-size: 100% 100%; 
+  opacity: 0.15; 
+  pointer-events: none;
+}
 
 /* Texture Grain Papier - Optimisée */
 .noise-overlay {
@@ -330,8 +331,12 @@ p { font-size: 1rem; line-height: 1.8; opacity: 0.9; }
 
 /* --- FOOTER --- */
 .footer {
-  background: var(--rouge); color: var(--beige);
-  padding: 80px 5% 40px; border-top: 10px solid var(--vert); margin-bottom: 0%;
+  margin-top: auto;
+  background: var(--rouge); 
+  color: var(--beige);
+  padding: 80px 5% 40px; 
+  border-top: 10px solid var(--vert);
+  width: 100%;
 }
 .footer-inner {
   max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 30px;
