@@ -35,45 +35,70 @@ if (isset($_SESSION['user_id'])) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connexion - Les Mécaniques Anciennes du Haut-Lignon</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Great+Vibes&display=swap" rel="stylesheet">
+  <title>Les Mécaniques Anciennes | Haut-Lignon</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="CSS/style.css">
-  <link rel="stylesheet" href="CSS/connexion.css">
 </head>
-<style>
-    .header {
-        background: url('images/fondheader.JPG') no-repeat center 80% / cover;
-        border-bottom-left-radius: 25px;
-        border-bottom-right-radius: 25px;
-        overflow: hidden;
-    }
-</style>
+
 <body>
+  <div class="noise-overlay"></div>
 
-  <header class="header"> 
-    <div class="top-bar">
-      <div class="menu-box">
-        <input type="checkbox" id="menu-toggle" hidden>
-        <label for="menu-toggle" class="burger">☰</label>
-        <nav class="nav-menu">
-          <a href="index.php">Accueil</a>
-          <a href="manifestations.php">Manifestations</a>
-          <a href="ventes.php">Ventes</a>
-          <a href="contact.php">Contact</a>
-          <hr class="menu-divider">
-          <a href="connexion.php">Connexion</a>
-          <a href="inscription.php">Inscription</a>
-        </nav>
-      </div>
-
-      <a href="index.php" class="logo">
-        <img src="images/logo.png" alt="Logo">
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <img src="images/logo.png" alt="Logo" width="75" height="75">
+        <span class="logo-text">LA PASSION <span class="highlight">AUTOMOBILE</span></span>
       </a>
+      
+      <div class="menu-wrap">
+        <input type="checkbox" id="menu-toggle" hidden>
+        <label for="menu-toggle" class="burger" aria-label="Menu">
+            <span class="line top"></span>
+            <span class="line bottom"></span>
+        </label>
+        
+        <div class="menu-overlay">
+          <svg class="bg-motif" viewBox="0 0 200 60" fill="none" aria-hidden="true">
+            <path d="M40 50C25 50 15 38 15 25C15 12 25 0 40 0C32 0 25 8 25 25C25 42 32 50 40 50Z" fill="currentColor"/>
+            <path d="M100 50C85 50 75 38 75 25C75 12 85 0 100 0C92 0 85 8 85 25C85 42 92 50 100 50Z" fill="currentColor"/>
+            <path d="M160 50C145 50 135 38 135 25C135 12 145 0 160 0C152 0 145 8 145 25C145 42 152 50 160 50Z" fill="currentColor"/>
+          </svg>
 
-      <a href="contact.php" class="btn-accueil">ADHÉRER</a>
+          <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="manifestations.html">Manifestations</a></li>
+            <li><a href="ventes.html">Ventes</a></li>
+            <li class="mobile-only"><a href="contact.html" class="btn-menu-member">Devenir Membre</a></li>
+          </ul>
+        </div>
+      </div>
     </div>
+  </nav>
 
-    <h1 class="hero-title">Connexion</h1>
+  <header class="header">
+    <div class="header-overlay"></div>
+    <div class="hero-content">
+      <p class="pre-title">Est. 2026 — Haut-Lignon</p>
+      <h1 class="hero-title">
+        <span class="line">Mécaniques</span>
+        <span class="line indent">Anciennes</span>
+      </h1>
+      <div class="scroll-down">
+        <span>Découvrir</span>
+        <div class="vertical-line"></div>
+      </div>
+      <div class="emblem-container">
+        <svg class="emblem" viewBox="0 0 200 60" fill="none" aria-hidden="true">
+            <path d="M40 50C25 50 15 38 15 25C15 12 25 0 40 0C32 0 25 8 25 25C25 42 32 50 40 50Z" fill="currentColor"/>
+            <path d="M100 50C85 50 75 38 75 25C75 12 85 0 100 0C92 0 85 8 85 25C85 42 92 50 100 50Z" fill="currentColor"/>
+            <path d="M160 50C145 50 135 38 135 25C135 12 145 0 160 0C152 0 145 8 145 25C145 42 152 50 160 50Z" fill="currentColor"/>
+        </svg>
+      </div>
+    </div>
   </header>
 
   <main class="container">
@@ -101,23 +126,24 @@ if (isset($_SESSION['user_id'])) {
     </div>
   </main>
 
-  <footer class="footer">
-    <div class="footer-container">
-      
-      <div class="footer-text-group">
-        <div class="footer-links">
-          <a href="contact.php">Contact</a>
-          <a href="mentions.php">Mentions</a>
-        </div>
-        <p class="copyright">&copy; 2026 Les Mécaniques Anciennes du Haut-Lignon</p>
+ <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h4>Mécaniques Anciennes</h4>
+        <svg class="emblem-mini" viewBox="0 0 200 60" fill="none" aria-hidden="true">
+            <path d="M40 50C25 50 15 38 15 25C15 12 25 0 40 0C32 0 25 8 25 25C25 42 32 50 40 50Z" fill="currentColor"/>
+            <path d="M100 50C85 50 75 38 75 25C75 12 85 0 100 0C92 0 85 8 85 25C85 42 92 50 100 50Z" fill="currentColor"/>
+            <path d="M160 50C145 50 135 38 135 25C135 12 145 0 160 0C152 0 145 8 145 25C145 42 152 50 160 50Z" fill="currentColor"/>
+        </svg>
       </div>
-
-      <div class="footer-social">
-        <a href="https://www.facebook.com/people/Les-M%C3%A9caniques-Anciennes-du-Haut-Lignon/100055948035657/?epa=SEARCH_BOX#" target="_blank">
-          <img src="images/logofb.png" alt="Facebook" class="fb-icon">
-        </a>
+      <div class="footer-links">
+        <a href="contact.html">Devenir Membre</a>
+        <a href="mentions.html">Mentions Légales</a>
+        <a href="https://www.facebook.com/" target="_blank" class="fb-link">Facebook</a>
       </div>
-
+    </div>
+    <div class="copyright">
+      &copy; 2026 Tous droits réservés.
     </div>
   </footer>
 </body>
