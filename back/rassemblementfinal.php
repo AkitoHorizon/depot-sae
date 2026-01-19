@@ -1,3 +1,30 @@
+<?php
+session_start();
+require __DIR__ . '/back/DB.php';
+
+$pdo = DB::pdo();
+
+// On prend les événements qui ont des coordonnées
+$stmt = $pdo->query("
+  SELECT id, titre, date_debut, date_fin, description, lieu, type_vehicules, latitude, longitude
+  FROM evenement
+  WHERE latitude IS NOT NULL AND longitude IS NOT NULL
+  ORDER BY date_debut ASC
+");
+$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// On prépare un tableau propre pour le JS
+$events = [];
+foreach ($rows as $r) {
+    $events[] = [
+        'name' => $r['titre'],
+        'date' => date('d/m/Y', strtotime($r['date_debut'])),
+        'desc' => $r['description'] ?: ($r['type_vehicules'] ?: ''),
+        'pos'  => [(float)$r['latitude'], (float)$r['longitude']],
+        // icon sera choisi côté JS
+    ];
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -6,11 +33,11 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; background: #f0f2f5; }
-        #map { 
-            height: 500px; 
-            width: 100%; 
-            max-width: 900px; 
-            border-radius: 12px; 
+        #map {
+            height: 500px;
+            width: 100%;
+            max-width: 900px;
+            border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             margin: auto;
         }
@@ -21,21 +48,21 @@
 </head>
 <body>
 
-    <h1>Rassemblements 2026</h1>
+    <h1>Rassemblements</h1>
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        // 1. Initialisation de la carte (centrée sur le Massif Central)
+        // 1. Initialisation de la carte
         var map = L.map('map').setView([45.0, 3.8], 7);
 
-        // 2. Chargement du fond de carte (OpenStreetMap)
+        // 2. Fond de carte
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        // 3. Définition des icônes de couleurs
+        // 3. Icônes
         const createIcon = (color) => new L.Icon({
             iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
             shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -49,47 +76,21 @@
         const orangeIcon = createIcon('orange');
         const greenIcon = createIcon('green');
 
-        // 4. Liste des événements
-        const events = [
-            {
-                name: "Rassemblement Amical",
-                date: "26 Avril 2026",
-                desc: "Tout type de véhicule, très convivial.",
-                pos: [45.115, 4.391], // Mas-de-Tence
-                icon: greenIcon
-            },
-            {
-                name: "Sortie Mob et Motos",
-                date: "24 Mai 2026",
-                desc: "Réservé aux mobs et motos < 100cc.",
-                pos: [45.116, 4.395], // Décalé légèrement
-                icon: orangeIcon
-            },
-            {
-                name: "La Balade des Sucs",
-                date: "28 Juin 2026",
-                desc: "Routes du Forez. Véhicules de +25 ans.",
-                pos: [45.114, 4.393],
-                icon: redIcon
-            },
-            {
-                name: "Balade Cheveux au Vent",
-                date: "5-6 Septembre 2026",
-                desc: "Gorges du Tarn. Spécial cabriolets.",
-                pos: [44.350, 3.350], // Gorges du Tarn
-                icon: redIcon
-            }
-        ];
+        // 4. Events venant de PHP (BDD)
+        const events = <?= json_encode($events, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 
-        // 5. Ajout des marqueurs sur la carte
+        // 5. Ajout markers
         events.forEach(event => {
-            L.marker(event.pos, {icon: event.icon})
+            // règle simple pour couleur : à venir = vert, sinon rouge
+            const icon = greenIcon;
+
+            L.marker(event.pos, {icon})
                 .addTo(map)
                 .bindPopup(`
                     <div class="custom-popup">
                         <h3>${event.name}</h3>
                         <strong>📅 ${event.date}</strong>
-                        <p>${event.desc}</p>
+                        <p>${event.desc ?? ''}</p>
                     </div>
                 `);
         });
