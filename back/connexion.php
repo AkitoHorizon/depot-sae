@@ -1,33 +1,47 @@
 <?php
+declare(strict_types=1);
+
 session_start();
-require_once 'classes/basededonnee.php';
-require_once 'classes/Utilisateur.php';
+require __DIR__ . '/back/DB.php'; 
 
-// Traitement du formulaire
+$error = null;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    $email = trim($_POST['email'] ?? '');
+    $password = (string)($_POST['password'] ?? '');
 
-    $database = new basededonnee();
-    $utilisateur = new Utilisateur($database);
-    
-    $user = $utilisateur->connexion($email, $password);
+    if ($email === '' || $password === '') {
+        $error = "Merci de remplir l'email et le mot de passe.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Email invalide.";
+    } else {
+        try {
+            $pdo = DB::pdo();
 
-    if ($user) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_nom'] = $user['nom'];
-        $_SESSION['user_prenom'] = $user['prenom'];
-        $_SESSION['user_email'] = $user['email'];
-        
-        header('Location: index.php');
-        exit;
+            $stmt = $pdo->prepare("SELECT id, nom, prenom, email, mot_de_passe_hash FROM utilisateur WHERE email = :email LIMIT 1");
+            $stmt->execute([':email' => $email]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$user || !password_verify($password, $user['mot_de_passe_hash'])) {
+                $error = "Identifiants incorrects.";
+            } else {
+                // c'est our bloquer la fixation de session
+                session_regenerate_id(true);
+
+                // stocker le moins possible 
+                $_SESSION['id_user'] = (int)$user['id'];
+                $_SESSION['nom'] = $user['nom'];
+                $_SESSION['prenom'] = $user['prenom'];
+                $_SESSION['email'] = $user['email'];
+
+                // Redirection
+                header('Location: admin_dashboard.php');
+                exit;
+            }
+        } catch (Throwable $e) {
+            $error = "Erreur serveur. Réessaie plus tard.";
+        }
     }
-}
-
-// Si déjà connecté, rediriger vers l'accueil
-if (isset($_SESSION['user_id'])) {
-    header('Location: index.php');
-    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -35,90 +49,54 @@ if (isset($_SESSION['user_id'])) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connexion - Les Mécaniques Anciennes du Haut-Lignon</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Great+Vibes&display=swap" rel="stylesheet">
+  <title>Connexion - Les Mécaniques Anciennes</title>
   <link rel="stylesheet" href="CSS/style.css">
-  <link rel="stylesheet" href="CSS/connexion.css">
 </head>
-<style>
-    .header {
-        background: url('images/fondheader.JPG') no-repeat center 80% / cover;
-        border-bottom-left-radius: 25px;
-        border-bottom-right-radius: 25px;
-        overflow: hidden;
-    }
-</style>
 <body>
 
-  <header class="header"> 
-    <div class="top-bar">
-      <div class="menu-box">
-        <input type="checkbox" id="menu-toggle" hidden>
-        <label for="menu-toggle" class="burger">☰</label>
-        <nav class="nav-menu">
-          <a href="index.php">Accueil</a>
-          <a href="manifestations.php">Manifestations</a>
-          <a href="ventes.php">Ventes</a>
-          <a href="contact.php">Contact</a>
-          <hr class="menu-divider">
-          <a href="connexion.php">Connexion</a>
-          <a href="inscription.php">Inscription</a>
-        </nav>
-      </div>
+<header class="header">
+  <div class="top-bar">
+    <a href="index.php" class="logo">
+      <img src="images/logo.png" alt="Logo">
+    </a>
+    <a href="index.php" class="btn-accueil">ACCUEIL</a>
+  </div>
+  <h1 class="hero-title">Connexion</h1>
+</header>
 
-      <a href="index.php" class="logo">
-        <img src="images/logo.png" alt="Logo">
-      </a>
+<main class="container contact-container">
+  <article class="row">
+    <div class="text-wrap">
+      <h2>Se connecter</h2>
 
-      <a href="contact.php" class="btn-accueil">ADHÉRER</a>
+      <?php if ($error): ?>
+        <p style="margin: 10px 0;"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
+      <?php endif; ?>
+
+      <form method="post" action="connexion.php" autocomplete="on">
+        <label for="email">Email</label>
+        <input id="email" type="email" name="email" required value="<?= htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+
+        <label for="password">Mot de passe</label>
+        <input id="password" type="password" name="password" required>
+
+        <button type="submit">Connexion</button>
+      </form>
     </div>
+  </article>
+</main>
 
-    <h1 class="hero-title">Connexion</h1>
-  </header>
-
-  <main class="container">
-    <div class="auth-container">
-      <div class="auth-box">
-        <h2>Se connecter</h2>
-        <form action="connexion.php" method="POST" class="auth-form">
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required placeholder="votre@email.com">
-          </div>
-
-          <div class="form-group">
-            <label for="password">Mot de passe</label>
-            <input type="password" id="password" name="password" required placeholder="••••••••">
-          </div>
-
-          <button type="submit" class="btn-submit">Se connecter</button>
-        </form>
-
-        <div class="auth-footer">
-          <p>Pas encore de compte ? <a href="inscription.php">Créer un compte</a></p>
-        </div>
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-text-group">
+      <div class="footer-links">
+        <a href="contact.php">Contact</a>
+        <a href="mentions.html">Mentions</a>
       </div>
+      <p class="copyright">&copy; 2026 Les Mécaniques Anciennes du Haut-Lignon</p>
     </div>
-  </main>
+  </div>
+</footer>
 
-  <footer class="footer">
-    <div class="footer-container">
-      
-      <div class="footer-text-group">
-        <div class="footer-links">
-          <a href="contact.php">Contact</a>
-          <a href="mentions.php">Mentions</a>
-        </div>
-        <p class="copyright">&copy; 2026 Les Mécaniques Anciennes du Haut-Lignon</p>
-      </div>
-
-      <div class="footer-social">
-        <a href="https://www.facebook.com/people/Les-M%C3%A9caniques-Anciennes-du-Haut-Lignon/100055948035657/?epa=SEARCH_BOX#" target="_blank">
-          <img src="images/logofb.png" alt="Facebook" class="fb-icon">
-        </a>
-      </div>
-
-    </div>
-  </footer>
 </body>
 </html>
