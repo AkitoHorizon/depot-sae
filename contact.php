@@ -144,7 +144,7 @@
       <div class="footer-links">
         <a href="contact.html">Devenir Membre</a>
         <a href="mentions.html">Mentions Légales</a>
-        <a href="https://www.facebook.com/" target="_blank" class="fb-link">Facebook</a>
+        <a href="https://www.facebook.com/people/Les-M%C3%A9caniques-Anciennes-du-Haut-Lignon/100055948035657/?epa=SEARCH_BOX#" target="_blank" class="fb-link">Facebook</a>
       </div>
     </div>
     <div class="copyright">

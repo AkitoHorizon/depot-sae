@@ -142,17 +142,29 @@ foreach ($rows as $r) {
     </div>
   </main>
 
-  <footer class="footer">
+ <footer class="footer">
     <div class="footer-inner">
+      <!-- Marque et emblème de l'association -->
       <div class="footer-brand">
         <h4>Mécaniques Anciennes</h4>
+        <!-- Version miniature de l'emblème SVG -->
+        <svg class="emblem-mini" viewBox="0 0 200 60" fill="none" aria-hidden="true">
+            <path d="M40 50C25 50 15 38 15 25C15 12 25 0 40 0C32 0 25 8 25 25C25 42 32 50 40 50Z" fill="currentColor"/>
+            <path d="M100 50C85 50 75 38 75 25C75 12 85 0 100 0C92 0 85 8 85 25C85 42 92 50 100 50Z" fill="currentColor"/>
+            <path d="M160 50C145 50 135 38 135 25C135 12 145 0 160 0C152 0 145 8 145 25C145 42 152 50 160 50Z" fill="currentColor"/>
+        </svg>
       </div>
+      <!-- target="_blank" pour ouvrir facebook dans un nouvel onglet-->
       <div class="footer-links">
-        <a href="contact.html">Devenir Membre</a>
+        <a href="contact.php">Devenir Membre</a>
         <a href="mentions.html">Mentions Légales</a>
+        <a href="https://www.facebook.com/people/Les-M%C3%A9caniques-Anciennes-du-Haut-Lignon/100055948035657/?epa=SEARCH_BOX#" target="_blank" class="fb-link">Facebook</a>
       </div>
     </div>
-    <div class="copyright">&copy; 2026 Tous droits réservés.</div>
+    <!-- Copyright -->
+    <div class="copyright">
+      &copy; 2026 Tous droits réservés.
+    </div>
   </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
