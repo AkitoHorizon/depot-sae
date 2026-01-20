@@ -45,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $localisation = trim($_POST['localisation'] ?? '');
                 $telephoneContact = trim($_POST['telephone_contact'] ?? '');
 
+                // Images : URLs séparées par virgule ou nouvelle ligne
                 $imagesRaw = trim($_POST['images_urls'] ?? '');
 
                 if ($titre === '') {
@@ -80,28 +81,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $annonceId = (int)$pdo->lastInsertId();
 
+                // Images
                 if ($imagesRaw !== '') {
                     $urls = preg_split('/[\r\n,]+/', $imagesRaw);
                     $ordre = 0;
-                    $insImg = $pdo->prepare("INSERT INTO image_vehicule (annonce_id, url, ordre) VALUES (:aid, :url, :ordre)");
+
+                    $insImg = $pdo->prepare("
+                        INSERT INTO image_vehicule (annonce_id, url, ordre)
+                        VALUES (:aid, :url, :ordre)
+                    ");
+
                     foreach ($urls as $u) {
                         $u = trim($u);
                         if ($u === '') continue;
                         $ordre++;
-                        $insImg->execute([':aid' => $annonceId, ':url' => $u, ':ordre' => $ordre]);
+                        $insImg->execute([
+                            ':aid' => $annonceId,
+                            ':url' => $u,
+                            ':ordre' => $ordre
+                        ]);
                     }
                 }
+
                 $success = "Annonce publiée ✅";
                 $view = 'mine';
 
             } elseif ($action === 'delete') {
                 $annonceId = (int)($_POST['annonce_id'] ?? 0);
-                if ($annonceId <= 0) throw new RuntimeException("Annonce invalide.");
+                if ($annonceId <= 0) {
+                    throw new RuntimeException("Annonce invalide.");
+                }
 
+                // Vérifie propriétaire
                 $check = $pdo->prepare("SELECT id FROM annonce_vehicule WHERE id = :id AND utilisateur_id = :uid");
                 $check->execute([':id' => $annonceId, ':uid' => $userId]);
-                if (!$check->fetch()) throw new RuntimeException("Suppression refusée.");
+                if (!$check->fetch()) {
+                    throw new RuntimeException("Suppression refusée : ce n’est pas ton annonce.");
+                }
 
+                // Supprime images puis annonce
                 $pdo->prepare("DELETE FROM image_vehicule WHERE annonce_id = :id")->execute([':id' => $annonceId]);
                 $pdo->prepare("DELETE FROM annonce_vehicule WHERE id = :id")->execute([':id' => $annonceId]);
 
@@ -114,17 +132,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// SQL Queries
-$allSql = "SELECT a.*, (SELECT iv.url FROM image_vehicule iv WHERE iv.annonce_id = a.id ORDER BY iv.ordre ASC LIMIT 1) AS image_principale, u.nom AS u_nom, u.prenom AS u_prenom FROM annonce_vehicule a JOIN utilisateur u ON u.id = a.utilisateur_id ORDER BY a.date_creation DESC";
-$mineSql = "SELECT a.*, (SELECT iv.url FROM image_vehicule iv WHERE iv.annonce_id = a.id ORDER BY iv.ordre ASC LIMIT 1) AS image_principale FROM annonce_vehicule a WHERE a.utilisateur_id = :uid ORDER BY a.date_creation DESC";
 
-$annoncesToShow = [];
+// Toutes les annonces + vendeur (nom/prenom) + 1ère image
+$allSql = "
+SELECT a.*,
+        (SELECT iv.url
+          FROM image_vehicule iv
+         WHERE iv.annonce_id = a.id
+         ORDER BY iv.ordre ASC, iv.id ASC
+         LIMIT 1) AS image_principale,
+        u.nom AS u_nom, u.prenom AS u_prenom
+  FROM annonce_vehicule a
+  JOIN utilisateur u ON u.id = a.utilisateur_id
+ ORDER BY a.date_creation DESC
+";
+
+// Mes annonces
+$mineSql = "
+SELECT a.*,
+        (SELECT iv.url
+          FROM image_vehicule iv
+         WHERE iv.annonce_id = a.id
+         ORDER BY iv.ordre ASC, iv.id ASC
+         LIMIT 1) AS image_principale
+  FROM annonce_vehicule a
+ WHERE a.utilisateur_id = :uid
+ ORDER BY a.date_creation DESC
+";
+
+$allAnnonces = [];
+$myAnnonces  = [];
+
 if ($view === 'all') {
-    $annoncesToShow = $pdo->query($allSql)->fetchAll(PDO::FETCH_ASSOC);
+    $allAnnonces = $pdo->query($allSql)->fetchAll(PDO::FETCH_ASSOC);
 } elseif ($view === 'mine' && $userId) {
     $st = $pdo->prepare($mineSql);
     $st->execute([':uid' => $userId]);
-    $annoncesToShow = $st->fetchAll(PDO::FETCH_ASSOC);
+    $myAnnonces = $st->fetchAll(PDO::FETCH_ASSOC);
 }
 ?>
 
@@ -134,10 +178,57 @@ if ($view === 'all') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ventes | Les Mécaniques Anciennes</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="CSS/style.css">
+  <style>
+    /* Intégration des styles spécifiques à la logique PHP dans la charte graphique */
+    .tabs { display: flex; gap: 15px; justify-content: center; margin: 40px 0; }
+    .tabs a { 
+        padding: 12px 25px; 
+        border: 1px solid var(--rouge); 
+        border-radius: 50px; 
+        text-decoration: none; 
+        color: var(--rouge); 
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: 0.3s;
+    }
+    .tabs a:hover, .tabs a.active { background: var(--rouge); color: var(--beige); }
+    
+    .form-box { 
+        background-color: var(--rouge); 
+        color: var(--beige); 
+        padding: 50px; 
+        max-width: 800px; 
+        margin: 0 auto 100px;
+        position: relative;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    }
+    .form-box input, .form-box textarea { 
+        width: 100%; 
+        padding: 12px; 
+        margin: 10px 0 25px; 
+        background: rgba(255,255,255,0.05); 
+        border: 1px solid var(--vert); 
+        color: #fff;
+    }
+    .form-box button { 
+        background: var(--beige); 
+        color: var(--rouge); 
+        border: none; 
+        padding: 15px 30px; 
+        cursor: pointer; 
+        font-weight: bold;
+        width: 100%;
+    }
+    .msg-status { text-align: center; padding: 20px; margin-bottom: 30px; border: 1px solid var(--vert); }
+  </style>
 </head>
 
 <body>
@@ -149,17 +240,19 @@ if ($view === 'all') {
         <img src="images/logo.png" alt="Logo" width="75" height="75">
         <span class="logo-text">LA PASSION <span class="highlight">AUTOMOBILE</span></span>
       </a>
+      
       <div class="menu-wrap">
         <input type="checkbox" id="menu-toggle" hidden>
         <label for="menu-toggle" class="burger" aria-label="Menu">
             <span class="line top"></span>
             <span class="line bottom"></span>
         </label>
+        
         <div class="menu-overlay">
           <ul class="nav-links">
             <li><a href="index.php">Accueil</a></li>
             <li><a href="vente.php?view=all">Ventes</a></li>
-            <?php if($userId): ?>
+            <?php if ($userId): ?>
                 <li><a href="vente.php?view=mine">Mes Annonces</a></li>
                 <li><a href="vente.php?view=add">Publier</a></li>
             <?php endif; ?>
@@ -182,76 +275,103 @@ if ($view === 'all') {
 
   <main class="container">
     
-    <div style="text-align: center; margin-bottom: 50px;">
-        <?php if ($success): ?><p class="msg" style="color: green;"><?= $success ?></p><?php endif; ?>
-        <?php if ($error): ?><p class="msg" style="color: var(--rouge-vif);"><?= $error ?></p><?php endif; ?>
-        
-        <div class="tabs" style="display:flex; justify-content:center; gap:20px; margin: 30px 0;">
-            <a href="vente.php?view=all" class="btn-menu-member" style="text-decoration:none;">Toutes les annonces</a>
-            <?php if ($userId): ?>
-                <a href="vente.php?view=mine" class="btn-menu-member" style="text-decoration:none;">Mes annonces</a>
-                <a href="vente.php?view=add" class="btn-menu-member" style="text-decoration:none;">Ajouter</a>
-            <?php else: ?>
-                <a href="connexion.php?redirect=<?= urlencode($redirectAfter) ?>" class="btn-menu-member" style="text-decoration:none;">Se connecter pour publier</a>
-            <?php endif; ?>
-        </div>
+    <div class="tabs">
+        <a href="vente.php?view=all" class="<?= $view === 'all' ? 'active' : '' ?>">Annonces</a>
+        <?php if ($userId): ?>
+            <a href="vente.php?view=mine" class="<?= $view === 'mine' ? 'active' : '' ?>">Mes ventes</a>
+            <a href="vente.php?view=add" class="<?= $view === 'add' ? 'active' : '' ?>">Ajouter</a>
+        <?php else: ?>
+            <a href="connexion.php?redirect=<?= urlencode($redirectAfter) ?>">Publier une annonce</a>
+        <?php endif; ?>
     </div>
 
+    <?php if ($success || $error): ?>
+        <div class="msg-status reveal">
+            <?= htmlspecialchars($success ?? $error, ENT_QUOTES, 'UTF-8') ?>
+        </div>
+    <?php endif; ?>
+
     <?php if ($view === 'add' && $userId): ?>
-        <article class="row reveal visible" style="opacity: 1; transform: none; display:block; max-width:800px; margin: 0 auto 200px;">
-            <div class="text-content" style="width:100%; margin:0;">
-                <h2>Déposer <br><i>une annonce</i></h2>
-                <form method="post" action="vente.php?view=add" style="margin-top:30px;">
-                    <input type="hidden" name="action" value="add">
-                    <input type="hidden" name="csrf" value="<?= $csrf ?>">
-                    <input name="titre" placeholder="Titre (ex: Porsche 911 Targa)" required style="background:rgba(255,255,255,0.1); border:1px solid var(--vert); color:white; padding:15px; margin-bottom:15px; width:100%;">
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
-                        <input name="marque" placeholder="Marque" style="background:rgba(255,255,255,0.1); border:1px solid var(--vert); color:white; padding:15px; width:100%;">
-                        <input name="modele" placeholder="Modèle" style="background:rgba(255,255,255,0.1); border:1px solid var(--vert); color:white; padding:15px; width:100%;">
-                        <input name="annee" type="number" placeholder="Année" style="background:rgba(255,255,255,0.1); border:1px solid var(--vert); color:white; padding:15px; width:100%;">
-                        <input name="prix" type="number" step="0.01" placeholder="Prix (€)" style="background:rgba(255,255,255,0.1); border:1px solid var(--vert); color:white; padding:15px; width:100%;">
-                    </div>
-                    <input name="telephone_contact" placeholder="Téléphone de contact *" required style="background:rgba(255,255,255,0.1); border:1px solid var(--vert); color:white; padding:15px; margin-top:15px; width:100%;">
-                    <textarea name="description" rows="4" placeholder="Description du véhicule..." style="background:rgba(255,255,255,0.1); border:1px solid var(--vert); color:white; padding:15px; margin-top:15px; width:100%;"></textarea>
-                    <textarea name="images_urls" placeholder="URLs des images (une par ligne)" style="background:rgba(255,255,255,0.1); border:1px solid var(--vert); color:white; padding:15px; margin-top:15px; width:100%;"></textarea>
-                    <button type="submit" class="btn-menu-member" style="background:var(--beige); color:var(--rouge); border:none; margin-top:30px; cursor:pointer; width:100%;">PUBLIER L'ANNONCE</button>
-                </form>
-            </div>
-        </article>
+        <div class="form-box reveal visible">
+            <h2>Vendre votre <br><i>Véhicule</i></h2>
+            <form method="post" action="vente.php?view=add">
+                <input type="hidden" name="action" value="add">
+                <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8') ?>">
+                
+                <label>Titre de l'annonce *</label>
+                <input name="titre" required placeholder="Ex: Porsche 911 2.4S">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div><label>Marque</label><input name="marque"></div>
+                    <div><label>Modèle</label><input name="modele"></div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                    <div><label>Année</label><input name="annee" type="number"></div>
+                    <div><label>KM</label><input name="kilometrage" type="number"></div>
+                    <div><label>Prix (€)</label><input name="prix" type="number" step="0.01"></div>
+                </div>
+
+                <label>Localisation</label>
+                <input name="localisation">
+
+                <label>Téléphone de contact *</label>
+                <input name="telephone_contact" required>
+
+                <label>Description</label>
+                <textarea name="description" rows="5"></textarea>
+
+                <label>Images (un lien par ligne)</label>
+                <textarea name="images_urls" rows="3"></textarea>
+
+                <button type="submit">PUBLIER SUR LE SITE</button>
+            </form>
+        </div>
 
     <?php else: ?>
         <?php 
-        $count = 0;
-        foreach ($annoncesToShow as $a): 
-            $count++;
-            $styleClass = ($count % 2 != 0) ? 'style-1' : 'style-2';
-            $titre = htmlspecialchars((string)$a['titre']);
-            $img = $a['image_principale'] ? htmlspecialchars((string)$a['image_principale']) : 'images/placeholder.jpg';
-            $prix = $a['prix'] !== null ? number_format((float)$a['prix'], 0, ',', ' ') . ' €' : 'Prix non renseigné';
-            $vendeur = htmlspecialchars(trim(($a['u_prenom'] ?? '') . ' ' . ($a['u_nom'] ?? '')));
+        $annonces = ($view === 'mine') ? $myAnnonces : $allAnnonces;
+        if (empty($annonces)): ?>
+            <p style="text-align:center; padding: 100px 0;">Aucune annonce disponible pour le moment.</p>
+        <?php else: 
+            $i = 0;
+            foreach ($annonces as $a): 
+                $i++;
+                // Alternance automatique du style (style-1 image gauche, style-2 image droite)
+                $styleClass = ($i % 2 !== 0) ? 'style-1' : 'style-2';
+                $titre = htmlspecialchars((string)$a['titre'], ENT_QUOTES, 'UTF-8');
+                $img = $a['image_principale'] ? htmlspecialchars((string)$a['image_principale'], ENT_QUOTES, 'UTF-8') : 'images/placeholder.jpg';
+                $prix = $a['prix'] !== null ? number_format((float)$a['prix'], 0, ',', ' ') . ' €' : 'Prix non renseigné';
+                $annee = htmlspecialchars((string)($a['annee'] ?? '----'), ENT_QUOTES, 'UTF-8');
         ?>
             <article class="row reveal <?= $styleClass ?>">
-              <div class="img-frame">
-                <img src="<?= $img ?>" alt="<?= $titre ?>" loading="lazy" decoding="async">
-              </div>
-              <div class="text-content">
-                <span class="chapter"><?= htmlspecialchars((string)($a['annee'] ?? '??')) ?></span>
-                <h2><?= $titre ?> <br><i><?= htmlspecialchars((string)($a['marque'] ?? '')) ?></i></h2>
-                <p><?= htmlspecialchars(mb_strimwidth((string)($a['description'] ?? ''), 0, 180, '…')) ?></p>
-                <p style="font-size: 1.2rem; color: #fff; margin-top: 15px;"><strong><?= $prix ?></strong></p>
-                <small style="display:block; margin-top:10px; opacity:0.8;">📍 <?= htmlspecialchars((string)($a['localisation'] ?? 'Non précisé')) ?> • 📞 <?= htmlspecialchars((string)$a['telephone_contact']) ?></small>
-                
-                <?php if ($view === 'mine'): ?>
-                    <form method="post" style="margin-top:20px;" onsubmit="return confirm('Supprimer ?');">
-                        <input type="hidden" name="action" value="delete">
-                        <input type="hidden" name="csrf" value="<?= $csrf ?>">
-                        <input type="hidden" name="annonce_id" value="<?= $a['id'] ?>">
-                        <button type="submit" style="background:transparent; color:var(--rouge-vif); border:1px solid var(--rouge-vif); cursor:pointer; padding:5px 10px;">Supprimer l'annonce</button>
-                    </form>
-                <?php endif; ?>
-              </div>
+                <div class="img-frame">
+                    <img src="<?= $img ?>" alt="<?= $titre ?>" loading="lazy">
+                </div>
+                <div class="text-content">
+                    <span class="chapter"><?= $annee ?></span>
+                    <h2><?= $titre ?> <br><i><?= htmlspecialchars((string)($a['marque'] ?? ''), ENT_QUOTES, 'UTF-8') ?></i></h2>
+                    <p><?= htmlspecialchars(mb_strimwidth((string)($a['description'] ?? ''), 0, 180, '…', 'UTF-8'), ENT_QUOTES, 'UTF-8') ?></p>
+                    <p><strong>Prix : <?= $prix ?></strong></p>
+                    <small style="display:block; margin-top:10px; opacity:0.8;">
+                        <?= htmlspecialchars((string)($a['localisation'] ?? 'Haut-Lignon'), ENT_QUOTES, 'UTF-8') ?> 
+                        <?= htmlspecialchars((string)($a['telephone_contact'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
+                    </small>
+
+                    <?php if ($view === 'mine'): ?>
+                        <div class="actions" style="margin-top:20px;">
+                            <form method="post" onsubmit="return confirm('Supprimer ?');">
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8') ?>">
+                                <input type="hidden" name="annonce_id" value="<?= (int)$a['id'] ?>">
+                                <button type="submit" style="background:var(--rouge-vif); color:#fff; border:none; padding:5px 15px; cursor:pointer;">Supprimer l'annonce</button>
+                            </form>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </article>
         <?php endforeach; ?>
+      <?php endif; ?>
     <?php endif; ?>
 
   </main>
