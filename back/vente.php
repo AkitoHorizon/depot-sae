@@ -2,23 +2,28 @@
 declare(strict_types=1);
 
 session_start();
-require __DIR__ . '/back/DB.php';
+
+*/
+require __DIR__ . '/DB.php';
 
 $pdo = DB::pdo();
 
 $userId = isset($_SESSION['id_user']) ? (int)$_SESSION['id_user'] : null;
 
-//  CSRF simpleggg
+// CSRF simple
 if (empty($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(16));
 }
 $csrf = $_SESSION['csrf'];
 
-$view = $_GET['view'] ?? 'all'; 
+$view = $_GET['view'] ?? 'all'; // all | mine | add
 $success = null;
 $error = null;
 
-//  ACTIONS (POST) 
+// URL de retour après connexion/inscription
+$redirectAfter = 'vente.php?view=add';
+
+// ---------- ACTIONS POST ----------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     $token  = $_POST['csrf'] ?? '';
@@ -30,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         try {
             if ($action === 'add') {
-                //  créer  une annonce 
                 $titre = trim($_POST['titre'] ?? '');
                 $marque = trim($_POST['marque'] ?? '');
                 $modele = trim($_POST['modele'] ?? '');
@@ -40,16 +44,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $prix = trim($_POST['prix'] ?? '');
                 $description = trim($_POST['description'] ?? '');
                 $localisation = trim($_POST['localisation'] ?? '');
-                $telephone = trim($_POST['telephone_contact'] ?? '');
+                $telephoneContact = trim($_POST['telephone_contact'] ?? '');
 
-                // images : urls séparées par virgule ou nouvelle ligne
+                // Images : URLs séparées par virgule ou nouvelle ligne
                 $imagesRaw = trim($_POST['images_urls'] ?? '');
 
                 if ($titre === '') {
                     throw new RuntimeException("Le titre est obligatoire.");
                 }
+                if ($telephoneContact === '') {
+                    throw new RuntimeException("Le téléphone de contact est obligatoire.");
+                }
 
-                // conversions sûres
                 $anneeVal = ($annee === '') ? null : (int)$annee;
                 $kmVal = ($kilometrage === '') ? null : (int)$kilometrage;
                 $prixVal = ($prix === '') ? null : (float)$prix;
@@ -71,12 +77,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ':prix' => $prixVal,
                     ':description' => ($description === '' ? null : $description),
                     ':localisation' => ($localisation === '' ? null : $localisation),
-                    ':tel' => ($telephone === '' ? null : $telephone),
+                    ':tel' => $telephoneContact,
                 ]);
 
                 $annonceId = (int)$pdo->lastInsertId();
 
-                // insérer des images 
+                // Images
                 if ($imagesRaw !== '') {
                     $urls = preg_split('/[\r\n,]+/', $imagesRaw);
                     $ordre = 0;
@@ -98,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
 
-                $success = "Annonce créée ✅";
+                $success = "Annonce publiée ✅";
                 $view = 'mine';
 
             } elseif ($action === 'delete') {
@@ -107,15 +113,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     throw new RuntimeException("Annonce invalide.");
                 }
 
-                // sécurité : vérifier que l’annonce appartient à l’utilisateur
+                // Vérifie propriétaire
                 $check = $pdo->prepare("SELECT id FROM annonce_vehicule WHERE id = :id AND utilisateur_id = :uid");
                 $check->execute([':id' => $annonceId, ':uid' => $userId]);
                 if (!$check->fetch()) {
-                    throw new RuntimeException("Suppression refusée (pas ton annonce).");
+                    throw new RuntimeException("Suppression refusée : ce n’est pas ton annonce.");
                 }
 
-                // suppression (les images seront supprimées via FK CASCADE si tes FK sont en place)
-                // sinon on supprime images manuellement avant 
+                // Supprime images puis annonce
                 $pdo->prepare("DELETE FROM image_vehicule WHERE annonce_id = :id")->execute([':id' => $annonceId]);
                 $pdo->prepare("DELETE FROM annonce_vehicule WHERE id = :id")->execute([':id' => $annonceId]);
 
@@ -128,9 +133,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-//  REQUÊTES AFFICHAGE 
+// ---------- DONNÉES AFFICHAGE ----------
 
-// 1ère image de chaque annonce avec de l'ordre bien sûr
+// Toutes les annonces + vendeur (nom/prenom) + 1ère image
 $allSql = "
 SELECT a.*,
        (SELECT iv.url
@@ -144,6 +149,7 @@ SELECT a.*,
  ORDER BY a.date_creation DESC
 ";
 
+// Mes annonces
 $mineSql = "
 SELECT a.*,
        (SELECT iv.url
@@ -160,11 +166,11 @@ $allAnnonces = [];
 $myAnnonces  = [];
 
 if ($view === 'all') {
-    $allAnnonces = $pdo->query($allSql)->fetchAll();
+    $allAnnonces = $pdo->query($allSql)->fetchAll(PDO::FETCH_ASSOC);
 } elseif ($view === 'mine' && $userId) {
     $st = $pdo->prepare($mineSql);
     $st->execute([':uid' => $userId]);
-    $myAnnonces = $st->fetchAll();
+    $myAnnonces = $st->fetchAll(PDO::FETCH_ASSOC);
 }
 ?>
 <!DOCTYPE html>
@@ -180,12 +186,13 @@ if ($view === 'all') {
     .card { border:1px solid #ddd; border-radius:14px; padding:14px; margin: 12px 0; display:flex; gap:14px; }
     .card img { width:160px; height:110px; object-fit:cover; border-radius:10px; }
     .card h3 { margin:0 0 8px 0; }
-    .card small { opacity:0.8; }
+    .card small { opacity:0.85; display:block; margin-bottom:6px; }
     .actions { margin-top:10px; display:flex; gap:10px; }
     .actions form { display:inline; }
     input, textarea { width:100%; padding:10px; margin:6px 0 12px; }
     button { padding:10px 14px; cursor:pointer; }
     .msg { margin: 12px 0; padding: 10px 12px; border-radius: 10px; border: 1px solid #ddd; }
+    .cta { margin: 10px 0 0; }
   </style>
 </head>
 <body>
@@ -207,9 +214,16 @@ if ($view === 'all') {
       <a href="vente.php?view=mine">Mes annonces</a>
       <a href="vente.php?view=add">Ajouter une annonce</a>
     <?php else: ?>
-      <a href="connexion.php">Se connecter pour publier</a>
+      <a class="cta" href="connexion.php?redirect=<?= urlencode($redirectAfter) ?>">Ajouter une annonce</a>
     <?php endif; ?>
   </div>
+
+  <?php if (!$userId): ?>
+    <p class="cta">
+      Pour publier une annonce : <a href="connexion.php?redirect=<?= urlencode($redirectAfter) ?>">connecte-toi</a>
+      ou <a href="inscription.php?redirect=<?= urlencode($redirectAfter) ?>">crée un compte</a>.
+    </p>
+  <?php endif; ?>
 
   <?php if ($success): ?>
     <div class="msg"><?= htmlspecialchars($success, ENT_QUOTES, 'UTF-8') ?></div>
@@ -220,7 +234,11 @@ if ($view === 'all') {
 
   <?php if ($view === 'add'): ?>
     <?php if (!$userId): ?>
-      <p>Tu dois être connecté pour ajouter une annonce. <a href="connexion.php">Connexion</a></p>
+      <p>
+        Tu dois être connecté pour ajouter une annonce.
+        <a href="connexion.php?redirect=<?= urlencode($redirectAfter) ?>">Connexion</a>
+        ou <a href="inscription.php?redirect=<?= urlencode($redirectAfter) ?>">Inscription</a>.
+      </p>
     <?php else: ?>
       <h2>Ajouter une annonce</h2>
 
@@ -252,8 +270,8 @@ if ($view === 'all') {
         <label>Localisation</label>
         <input name="localisation">
 
-        <label>Téléphone de contact</label>
-        <input name="telephone_contact">
+        <label>Téléphone de contact (affiché sur l’annonce) *</label>
+        <input name="telephone_contact" required>
 
         <label>Description</label>
         <textarea name="description" rows="6"></textarea>
@@ -267,7 +285,9 @@ if ($view === 'all') {
 
   <?php elseif ($view === 'mine'): ?>
     <?php if (!$userId): ?>
-      <p>Tu dois être connecté pour voir tes annonces. <a href="connexion.php">Connexion</a></p>
+      <p>Tu dois être connecté pour voir tes annonces.
+        <a href="connexion.php?redirect=<?= urlencode('vente.php?view=mine') ?>">Connexion</a>
+      </p>
     <?php else: ?>
       <h2>Mes annonces</h2>
 
@@ -276,17 +296,21 @@ if ($view === 'all') {
       <?php else: ?>
         <?php foreach ($myAnnonces as $a): ?>
           <?php
-            $titre = htmlspecialchars($a['titre'], ENT_QUOTES, 'UTF-8');
-            $img = $a['image_principale'] ? htmlspecialchars($a['image_principale'], ENT_QUOTES, 'UTF-8') : 'images/placeholder.jpg';
+            $titre = htmlspecialchars((string)$a['titre'], ENT_QUOTES, 'UTF-8');
+            $img = $a['image_principale'] ? htmlspecialchars((string)$a['image_principale'], ENT_QUOTES, 'UTF-8') : 'images/placeholder.jpg';
             $prix = $a['prix'] !== null ? number_format((float)$a['prix'], 2, ',', ' ') . ' €' : 'Prix non renseigné';
-            $lieu = htmlspecialchars($a['localisation'] ?? '', ENT_QUOTES, 'UTF-8');
-            $date = htmlspecialchars($a['date_creation'] ?? '', ENT_QUOTES, 'UTF-8');
+            $lieu = htmlspecialchars((string)($a['localisation'] ?? ''), ENT_QUOTES, 'UTF-8');
+            $tel  = htmlspecialchars((string)($a['telephone_contact'] ?? ''), ENT_QUOTES, 'UTF-8');
           ?>
           <div class="card">
             <img src="<?= $img ?>" alt="<?= $titre ?>">
             <div style="flex:1">
               <h3><?= $titre ?></h3>
-              <small><?= $prix ?><?= $lieu !== '' ? " • {$lieu}" : "" ?><?= $date !== '' ? " • {$date}" : "" ?></small>
+              <small><?= $prix ?><?= $lieu !== '' ? " • {$lieu}" : "" ?></small>
+
+              <?php if ($tel !== ''): ?>
+                <small>📞 <?= $tel ?></small>
+              <?php endif; ?>
 
               <div class="actions">
                 <form method="post" action="vente.php?view=mine" onsubmit="return confirm('Supprimer cette annonce ?');">
@@ -310,17 +334,23 @@ if ($view === 'all') {
     <?php else: ?>
       <?php foreach ($allAnnonces as $a): ?>
         <?php
-          $titre = htmlspecialchars($a['titre'], ENT_QUOTES, 'UTF-8');
-          $img = $a['image_principale'] ? htmlspecialchars($a['image_principale'], ENT_QUOTES, 'UTF-8') : 'images/placeholder.jpg';
+          $titre = htmlspecialchars((string)$a['titre'], ENT_QUOTES, 'UTF-8');
+          $img = $a['image_principale'] ? htmlspecialchars((string)$a['image_principale'], ENT_QUOTES, 'UTF-8') : 'images/placeholder.jpg';
           $prix = $a['prix'] !== null ? number_format((float)$a['prix'], 2, ',', ' ') . ' €' : 'Prix non renseigné';
-          $lieu = htmlspecialchars($a['localisation'] ?? '', ENT_QUOTES, 'UTF-8');
-          $vendeur = htmlspecialchars(($a['u_prenom'] ?? '') . ' ' . ($a['u_nom'] ?? ''), ENT_QUOTES, 'UTF-8');
+          $lieu = htmlspecialchars((string)($a['localisation'] ?? ''), ENT_QUOTES, 'UTF-8');
+          $vendeur = htmlspecialchars(trim(($a['u_prenom'] ?? '') . ' ' . ($a['u_nom'] ?? '')), ENT_QUOTES, 'UTF-8');
+          $tel = htmlspecialchars((string)($a['telephone_contact'] ?? ''), ENT_QUOTES, 'UTF-8');
         ?>
         <div class="card">
           <img src="<?= $img ?>" alt="<?= $titre ?>">
           <div style="flex:1">
             <h3><?= $titre ?></h3>
             <small><?= $prix ?><?= $lieu !== '' ? " • {$lieu}" : "" ?><?= $vendeur !== '' ? " • {$vendeur}" : "" ?></small>
+
+            <?php if ($tel !== ''): ?>
+              <small>📞 <?= $tel ?></small>
+            <?php endif; ?>
+
             <p style="margin:10px 0 0;">
               <?= htmlspecialchars(mb_strimwidth((string)($a['description'] ?? ''), 0, 180, '…', 'UTF-8'), ENT_QUOTES, 'UTF-8') ?>
             </p>
