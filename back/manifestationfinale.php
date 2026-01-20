@@ -4,7 +4,7 @@ require __DIR__ . '/back/DB.php';
 
 $pdo = DB::pdo();
 
-// On prend les événements qui ont des coordonnées
+// On prend les événements qui ont des coordonnées et ceux qui ne le sont pas  c'est non
 $stmt = $pdo->query("
   SELECT id, titre, date_debut, date_fin, description, lieu, type_vehicules, latitude, longitude
   FROM evenement
