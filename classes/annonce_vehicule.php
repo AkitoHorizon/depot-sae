@@ -15,7 +15,7 @@ final class AnnonceVehicule
         public ?string $description = null,
         public ?string $localisation = null,
         public ?string $telephoneContact = null,
-        public ?string $dateCreation = null // datetime
+        public ?string $dateCreation = null 
     ) {}
 
     public function prixFormate(): string

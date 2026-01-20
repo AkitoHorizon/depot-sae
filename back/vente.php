@@ -15,14 +15,14 @@ if (empty($_SESSION['csrf'])) {
 }
 $csrf = $_SESSION['csrf'];
 
-$view = $_GET['view'] ?? 'all'; // all | mine | add
+$view = $_GET['view'] ?? 'all'; 
 $success = null;
 $error = null;
 
 // URL de retour après connexion/inscription
 $redirectAfter = 'vente.php?view=add';
 
-// ---------- ACTIONS POST ----------
+//  ACTIONS POST 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     $token  = $_POST['csrf'] ?? '';
