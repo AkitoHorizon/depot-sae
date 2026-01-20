@@ -239,8 +239,71 @@ h2 {
 }
 h2 i { color: #fff; font-weight: 300; text-transform: none; font-family: 'Cormorant Garamond'; }
 p { font-size: 1rem; line-height: 1.8; opacity: 0.9; }
-
-
+/* --- csspageconnection.php --- */
+.auth-box {
+        max-width: 500px;
+        margin: 0 auto 100px;
+        background-color: var(--rouge);
+        color: var(--beige);
+        padding: 50px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    .auth-box h2 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+        font-weight: 300;
+        line-height: 1.1;
+    }
+    .auth-box label {
+        display: block;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+        color: var(--vert);
+    }
+    .auth-box input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 25px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--vert);
+        color: #fff;
+        font-family: 'Montserrat', sans-serif;
+    }
+    .auth-box button {
+        width: 100%;
+        padding: 15px;
+        background: var(--beige);
+        color: var(--rouge);
+        border: none;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .auth-box button:hover {
+        background: #fff;
+    }
+    .error-msg {
+        background: var(--rouge-vif);
+        color: white;
+        padding: 10px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+        text-align: center;
+    }
+    .auth-footer {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+    .auth-footer a {
+        color: var(--vert);
+        text-decoration: underline;
+    }
 /* --- CONFIGURATION DESKTOP --- */
 @media (min-width: 900px) {
   

@@ -3,14 +3,12 @@ declare(strict_types=1);
 
 session_start();
 
-
-
-require __DIR__ . '/DB.php'; 
+require __DIR__ . '/DB.php';
 
 // Redirection après connexion 
 $redirect = $_GET['redirect'] ?? 'index.php';
 
-// Sécurité : empêcher redirection 
+// Sécurité : empêcher redirection externe
 if (preg_match('#^https?://#i', $redirect) || str_starts_with($redirect, '//')) {
     $redirect = 'index.php';
 }
@@ -40,95 +38,113 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $pdo = DB::pdo();
 
                 $stmt = $pdo->prepare("
-                    SELECT id, nom, prenom, email, mot_de_passe_hash
-                    FROM utilisateur
+                    SELECT id, nom, prenom, password_hash 
+                    FROM utilisateur 
                     WHERE email = :email
-                    LIMIT 1
                 ");
                 $stmt->execute([':email' => $email]);
-                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                $user = $stmt->fetch();
 
-                if (!$user || !password_verify($password, (string)$user['mot_de_passe_hash'])) {
-                    $error = "Identifiants incorrects.";
-                } else {
-                    session_regenerate_id(true);
-
+                if ($user && password_verify($password, $user['password_hash'])) {
+                    // Succès
                     $_SESSION['id_user'] = (int)$user['id'];
-                    $_SESSION['nom'] = (string)$user['nom'];
-                    $_SESSION['prenom'] = (string)$user['prenom'];
-                    $_SESSION['email'] = (string)$user['email'];
-
-                    header('Location: ' . $redirect);
+                    $_SESSION['nom']     = $user['nom'];
+                    $_SESSION['prenom']  = $user['prenom'];
+                    
+                    header("Location: " . $redirect);
                     exit;
+                } else {
+                    $error = "Identifiants incorrects.";
                 }
             } catch (Throwable $e) {
-                $error = "Erreur serveur. Réessaie plus tard.";
+                $error = "Erreur technique. Réessaye plus tard.";
             }
         }
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connexion - Les Mécaniques Anciennes</title>
-  <link rel="stylesheet" href="CSS/style.css">
+  <title>Connexion | Les Mécaniques Anciennes</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../CSS/style.css">
 </head>
+
 <body>
+  <div class="noise-overlay"></div>
 
-<header class="header">
-  <div class="top-bar">
-    <a href="index.php" class="logo">
-      <img src="images/logo.png" alt="Logo">
-    </a>
-    <a href="index.php" class="btn-accueil">ACCUEIL</a>
-  </div>
-  <h1 class="hero-title">Connexion</h1>
-</header>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.php" class="logo">
+        <img src="images/logo.png" alt="Logo" width="75" height="75">
+        <span class="logo-text">LA PASSION <span class="highlight">AUTOMOBILE</span></span>
+      </a>
+    </div>
+  </nav>
 
-<main class="container contact-container">
-  <article class="row">
-    <div class="text-wrap">
-      <h2>Se connecter</h2>
+  <header class="header">
+    <div class="header-overlay"></div>
+    <div class="hero-content">
+      <p class="pre-title">Espace Membre</p>
+      <h1 class="hero-title">
+        <span class="line">Votre</span>
+        <span class="line indent">Compte</span>
+      </h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="auth-box reveal">
+      <h2>Se <i>Connecter</i></h2>
 
       <?php if ($error): ?>
-        <p style="margin: 10px 0;"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
+        <div class="error-msg"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></div>
       <?php endif; ?>
 
-      <form method="post" action="connexion.php?redirect=<?= urlencode($redirect) ?>" autocomplete="on">
+      <form method="post" action="connexion.php?redirect=<?= urlencode($redirect) ?>">
         <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8') ?>">
 
-        <label for="email">Email</label>
+        <label for="email">Adresse Email</label>
         <input id="email" type="email" name="email" required
                value="<?= htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
 
         <label for="password">Mot de passe</label>
         <input id="password" type="password" name="password" required>
 
-        <button type="submit">Connexion</button>
+        <button type="submit">Entrer dans le garage</button>
       </form>
 
-      <p style="margin-top:12px;">
-        Pas de compte ?
+      <div class="auth-footer">
+        Pas encore membre ? <br>
         <a href="inscription.php?redirect=<?= urlencode($redirect) ?>">Créer un compte</a>
-      </p>
-    </div>
-  </article>
-</main>
-
-<footer class="footer">
-  <div class="footer-container">
-    <div class="footer-text-group">
-      <div class="footer-links">
-        <a href="contact.php">Contact</a>
-        <a href="mentions.html">Mentions</a>
       </div>
-      <p class="copyright">&copy; 2026 Les Mécaniques Anciennes du Haut-Lignon</p>
     </div>
-  </div>
-</footer>
+  </main>
 
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h4>Mécaniques Anciennes</h4>
+      </div>
+    </div>
+    <div class="copyright">&copy; 2026 Tous droits réservés.</div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>
