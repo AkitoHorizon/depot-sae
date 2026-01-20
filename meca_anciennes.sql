@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : jeu. 15 jan. 2026 à 13:10
+-- Généré le : mar. 20 jan. 2026 à 10:43
 -- Version du serveur : 10.4.32-MariaDB
--- Version de PHP : 8.2.12
+-- Version de PHP : 8.2.12 la nouvelle base de donnees `meca_anciennes`
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -14,7 +14,7 @@ SET time_zone = "+00:00";
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLjnjjD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
 --
@@ -35,6 +35,16 @@ CREATE TABLE `accueil_bloc` (
   `ordre_affichage` int(11) DEFAULT 0,
   `actif` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `accueil_bloc`
+--
+
+INSERT INTO `accueil_bloc` (`id`, `titre`, `texte`, `image_url`, `ordre_affichage`, `actif`) VALUES
+(1, 'QUI SOMMES-NOUS', 'Association de collectionneurs, nous nous rejoignons lors de manifestations pour partager des moments autour de notre passion.', 'images/qui.jpg', 1, 1),
+(2, 'PASSION', 'Notre passion pour les mécaniques anciennes nous unit et nous rassemble régulièrement.', 'images/passion.jpg', 2, 1),
+(3, 'PARTAGE', 'Nous aimons partager nos connaissances et nos découvertes de manière conviviale lors de nos manifestations.', 'images/partage.jpg', 3, 1),
+(4, 'CONVIVIAL', 'Les manifestations nous permettent de partager nos connaissances et nos découvertes de manière conviviale.', 'images/convivial.jpg', 4, 1);
 
 -- --------------------------------------------------------
 
@@ -108,7 +118,9 @@ CREATE TABLE `evenement` (
   `lieu` varchar(255) DEFAULT NULL,
   `type_vehicules` varchar(255) DEFAULT NULL,
   `image_principale` varchar(255) DEFAULT NULL,
-  `date_creation` datetime DEFAULT current_timestamp()
+  `date_creation` datetime DEFAULT current_timestamp(),
+  `latitude` decimal(9,6) DEFAULT NULL,
+  `longitude` decimal(9,6) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -298,7 +310,7 @@ ALTER TABLE `video_archive`
 -- AUTO_INCREMENT pour la table `accueil_bloc`
 --
 ALTER TABLE `accueil_bloc`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT pour la table `adhesion_demande`
