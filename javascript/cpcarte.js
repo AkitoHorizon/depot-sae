@@ -1,5 +1,5 @@
 // recevoir les événements depuis PHP
-const events = <?= json_encode($events) ?>;
+const events = json_encode($events);
 
 // boucle pour afficher les marqueurs
 events.forEach(event => {

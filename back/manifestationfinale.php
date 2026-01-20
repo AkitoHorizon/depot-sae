@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '/back/DB.php';
+require __DIR__ . '/DB.php';
 
 $pdo = DB::pdo();
 
