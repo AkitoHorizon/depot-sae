@@ -2,44 +2,68 @@
 declare(strict_types=1);
 
 session_start();
-require __DIR__ . '/back/DB.php'; 
+
+
+*/
+require __DIR__ . '/DB.php'; 
+
+// Redirection après connexion 
+$redirect = $_GET['redirect'] ?? 'index.php';
+
+// Sécurité : empêcher redirection 
+if (preg_match('#^https?://#i', $redirect) || str_starts_with($redirect, '//')) {
+    $redirect = 'index.php';
+}
+
+// CSRF simple
+if (empty($_SESSION['csrf'])) {
+    $_SESSION['csrf'] = bin2hex(random_bytes(16));
+}
+$csrf = $_SESSION['csrf'];
 
 $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email'] ?? '');
-    $password = (string)($_POST['password'] ?? '');
-
-    if ($email === '' || $password === '') {
-        $error = "Merci de remplir l'email et le mot de passe.";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = "Email invalide.";
+    $token = $_POST['csrf'] ?? '';
+    if (!hash_equals($csrf, $token)) {
+        $error = "Action refusée (sécurité). Recharge la page.";
     } else {
-        try {
-            $pdo = DB::pdo();
+        $email = trim($_POST['email'] ?? '');
+        $password = (string)($_POST['password'] ?? '');
 
-            $stmt = $pdo->prepare("SELECT id, nom, prenom, email, mot_de_passe_hash FROM utilisateur WHERE email = :email LIMIT 1");
-            $stmt->execute([':email' => $email]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($email === '' || $password === '') {
+            $error = "Merci de remplir l'email et le mot de passe.";
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = "Email invalide.";
+        } else {
+            try {
+                $pdo = DB::pdo();
 
-            if (!$user || !password_verify($password, $user['mot_de_passe_hash'])) {
-                $error = "Identifiants incorrects.";
-            } else {
-                // c'est our bloquer la fixation de session
-                session_regenerate_id(true);
+                $stmt = $pdo->prepare("
+                    SELECT id, nom, prenom, email, mot_de_passe_hash
+                    FROM utilisateur
+                    WHERE email = :email
+                    LIMIT 1
+                ");
+                $stmt->execute([':email' => $email]);
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                // stocker le moins possible 
-                $_SESSION['id_user'] = (int)$user['id'];
-                $_SESSION['nom'] = $user['nom'];
-                $_SESSION['prenom'] = $user['prenom'];
-                $_SESSION['email'] = $user['email'];
+                if (!$user || !password_verify($password, (string)$user['mot_de_passe_hash'])) {
+                    $error = "Identifiants incorrects.";
+                } else {
+                    session_regenerate_id(true);
 
-                // Redirection
-                header('Location: admin_dashboard.php');
-                exit;
+                    $_SESSION['id_user'] = (int)$user['id'];
+                    $_SESSION['nom'] = (string)$user['nom'];
+                    $_SESSION['prenom'] = (string)$user['prenom'];
+                    $_SESSION['email'] = (string)$user['email'];
+
+                    header('Location: ' . $redirect);
+                    exit;
+                }
+            } catch (Throwable $e) {
+                $error = "Erreur serveur. Réessaie plus tard.";
             }
-        } catch (Throwable $e) {
-            $error = "Erreur serveur. Réessaie plus tard.";
         }
     }
 }
@@ -73,15 +97,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p style="margin: 10px 0;"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
       <?php endif; ?>
 
-      <form method="post" action="connexion.php" autocomplete="on">
+      <form method="post" action="connexion.php?redirect=<?= urlencode($redirect) ?>" autocomplete="on">
+        <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8') ?>">
+
         <label for="email">Email</label>
-        <input id="email" type="email" name="email" required value="<?= htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+        <input id="email" type="email" name="email" required
+               value="<?= htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
 
         <label for="password">Mot de passe</label>
         <input id="password" type="password" name="password" required>
 
         <button type="submit">Connexion</button>
       </form>
+
+      <p style="margin-top:12px;">
+        Pas de compte ?
+        <a href="inscription.php?redirect=<?= urlencode($redirect) ?>">Créer un compte</a>
+      </p>
     </div>
   </article>
 </main>
