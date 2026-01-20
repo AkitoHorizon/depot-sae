@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '/back/DB.php';
+require __DIR__ . '/DB.php';
 
 $pdo = DB::pdo();
 
@@ -13,7 +13,7 @@ $stmt = $pdo->query("
 ");
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// On prépare un tableau propre pour le JS
+// On préparer un tableau propre pour le JS
 $events = [];
 foreach ($rows as $r) {
     $events[] = [
