@@ -47,7 +47,12 @@ foreach ($rows as $r) {
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
   <link rel="stylesheet" href="../CSS/style.css">
-
+    <style>
+    /* Styles spécifiques pour cette page */
+    .header {
+        background: url('images/fondheader1.JPG') no-repeat center 70% / cover !important;
+    }
+  </style>
 </head>
 
 <body>

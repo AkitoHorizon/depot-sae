@@ -78,6 +78,12 @@ if (isset($_SESSION['user_id'])) {
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="../CSS/style.css">
+    <style>
+    /* Styles spécifiques pour cette page */
+    .header {
+        background: url('images/fondheader.JPG') no-repeat center 70% / cover !important;
+    }
+  </style>
 </head>
 
 <body>
