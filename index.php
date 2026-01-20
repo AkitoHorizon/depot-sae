@@ -44,6 +44,7 @@
           <ul class="nav-links">
             <li><a href="index.php">Accueil</a></li>
             <li><a href="manifestationfinale.php">Manifestations</a></li>
+            <li><a href="back/manifestationfinale.php">Manifestations</a></li>
             <li><a href="back/vente.php">Ventes</a></li>
             <li class="mobile-only"><a href="contact.php" class="btn-menu-member">Devenir Membre</a></li>
           </ul>

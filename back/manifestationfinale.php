@@ -6,6 +6,7 @@ require __DIR__ . '/DB.php';
 $pdo = DB::pdo();
 
 // Récupération des événements pour la carte (uniquement ceux avec coordonnées)
+// On prend les événements qui ont des coordonnées et ceux qui ne le sont pas  c'est non
 $stmt = $pdo->query("
   SELECT id, titre, date_debut, date_fin, description, lieu, type_vehicules, latitude, longitude
   FROM evenement
@@ -16,6 +17,8 @@ $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Préparation du tableau JSON pour le JavaScript
 $eventsForMap = [];
+// On préparer un tableau propre pour le JS
+$events = [];
 foreach ($rows as $r) {
     // Formatage de la date en français
     $dateFr = date('d/m/Y', strtotime($r['date_debut']));
