@@ -171,7 +171,7 @@
           <label for="slide-4" class="dot" id="dot-4"></label>
         </div>
   <!-- Carroussel Photo -->
-  <!-- Section avec carrousel d'images défilant en boucle infinie (effet marquee) -->
+  <!-- Section avec carrousel d'images défilant en boucle infinie  -->
   <section class="gallery-section reveal">
     <div class="marquee">
       <!-- Les images sont dupliquées pour créer un effet de boucle sans fin -->
@@ -213,7 +213,7 @@
     </div>
   </footer>
 
-  <!-- =========================== SCRIPT D'ANIMATION AU SCROLL =========================== -->
+  <!-- SCRIPT D'ANIMATION AU SCROLL  -->
   <script>
     /**
      * IntersectionObserver pour animer les éléments lors du scroll
