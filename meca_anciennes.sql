@@ -5,7 +5,7 @@
 -- Hôte : 127.0.0.1
 -- Généré le : mar. 20 jan. 2026 à 10:43
 -- Version du serveur : 10.4.32-MariaDB
--- Version de PHP : 8.2.12
+-- Version de PHP : 8.2.12 la nouvelle base de donnees `meca_anciennes`
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
