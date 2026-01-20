@@ -13,7 +13,7 @@ $stmt = $pdo->query("
 ");
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// On prépare un tableau propre pour le JS
+// On préparer un tableau propre pour le JS
 $events = [];
 foreach ($rows as $r) {
     $events[] = [
