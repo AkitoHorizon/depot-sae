@@ -289,7 +289,7 @@ if ($view === 'all') {
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-brand"><h4>Mécaniques Anciennes</h4></div>
-      <div class="footer-links"><a href="contact.html">Contact</a><a href="mentions.html">Mentions Légales</a></div>
+      <div class="footer-links"><a href="contact.php">Contact</a><a href="mentions.html">Mentions Légales</a></div>
     </div>
     <div class="copyright">&copy; 2026 Tous droits réservés.</div>
   </footer>

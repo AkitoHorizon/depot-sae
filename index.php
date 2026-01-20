@@ -17,7 +17,7 @@
 
   <nav class="navbar">
     <div class="nav-container">
-      <a href="index.html" class="logo">
+      <a href="index.php" class="logo">
         <img src="images/logo.png" alt="Logo" width="75" height="75">
         <span class="logo-text">LA PASSION <span class="highlight">AUTOMOBILE</span></span>
       </a>
@@ -42,10 +42,10 @@
 
           <!-- Liste des liens de navigation -->
           <ul class="nav-links">
-            <li><a href="index.html">Accueil</a></li>
-            <li><a href="manifestations.html">Manifestations</a></li>
+            <li><a href="index.php">Accueil</a></li>
+            <li><a href="manifestations.php">Manifestations</a></li>
             <li><a href="back/vente.php">Ventes</a></li>
-            <li class="mobile-only"><a href="contact.html" class="btn-menu-member">Devenir Membre</a></li>
+            <li class="mobile-only"><a href="contact.php" class="btn-menu-member">Devenir Membre</a></li>
           </ul>
         </div>
       </div>
@@ -202,7 +202,7 @@
       </div>
       <!-- target="_blank" pour ouvrir facebook dans un nouvel onglet-->
       <div class="footer-links">
-        <a href="contact.html">Devenir Membre</a>
+        <a href="contact.php">Devenir Membre</a>
         <a href="mentions.html">Mentions Légales</a>
         <a href="https://www.facebook.com/" target="_blank" class="fb-link">Facebook</a>
       </div>
