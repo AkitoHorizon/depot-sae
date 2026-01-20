@@ -43,7 +43,7 @@
           <!-- Liste des liens de navigation -->
           <ul class="nav-links">
             <li><a href="index.php">Accueil</a></li>
-            <li><a href="manifestations.php">Manifestations</a></li>
+            <li><a href="manifestationfinale.php">Manifestations</a></li>
             <li><a href="back/vente.php">Ventes</a></li>
             <li class="mobile-only"><a href="contact.php" class="btn-menu-member">Devenir Membre</a></li>
           </ul>
@@ -212,32 +212,16 @@
       &copy; 2026 Tous droits réservés.
     </div>
   </footer>
-
-  <!-- =========================== SCRIPT D'ANIMATION AU SCROLL =========================== -->
   <script>
-    /**
-     * IntersectionObserver pour animer les éléments lors du scroll
-     * 
-     * Fonctionnement :
-     * 1. Détecte quand un élément .reveal entre dans le viewport
-     * 2. Lui ajoute la classe 'visible' pour déclencher l'animation CSS
-     * 3. Arrête de l'observer (optimisation : économise des ressources)
-     * 
-     * threshold: 0.1 = l'élément doit être visible à 10% minimum
-     */
     const observer = new IntersectionObserver((entries, obs) => {
       entries.forEach(entry => {
-        // Si l'élément est visible dans le viewport
         if (entry.isIntersecting) {
-          // Ajoute la classe qui déclenche l'animation CSS
           entry.target.classList.add('visible');
-          // Arrête d'observer cet élément (gain de performance)
           obs.unobserve(entry.target);
         }
       });
     }, { threshold: 0.1 }); // L'élément doit être visible à 10% pour déclencher
     
-    // Applique l'observer à tous les éléments ayant la classe 'reveal'
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   </script>
 </body>

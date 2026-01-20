@@ -60,7 +60,7 @@
 
           <ul class="nav-links">
             <li><a href="index.php">Accueil</a></li>
-            <li><a href="manifestations.php">Manifestations</a></li>
+            <li><a href="manifestationfinale.php">Manifestations</a></li>
             <li><a href="back/vente.php">Ventes</a></li>
             <li><a href="contact.html">Contact</a></li>
             <li><a href="contact.html" class="btn-menu-member">Devenir Membre</a></li>
@@ -292,7 +292,7 @@
 
           <ul class="nav-links">
             <li><a href="index.php">Accueil</a></li>
-            <li><a href="manifestations.php">Manifestations</a></li>
+            <li><a href="manifestationfinale.php">Manifestations</a></li>
             <li><a href="ventes.php">Ventes</a></li>
             <li><a href="contact.php">Contact</a></li>
             <li><a href="contact.php" class="btn-menu-member">Devenir Membre</a></li>
@@ -524,7 +524,7 @@
 
           <ul class="nav-links">
             <li><a href="index.html">Accueil</a></li>
-            <li><a href="manifestations.html">Manifestations</a></li>
+            <li><a href="manifestationfinale.php">Manifestations</a></li>
             <li><a href="ventes.php">Ventes</a></li>
             <li><a href="contact.html">Contact</a></li>
             <li><a href="contact.html" class="btn-menu-member">Devenir Membre</a></li>
