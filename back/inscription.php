@@ -5,24 +5,55 @@ require_once __DIR__ . '/../classes/Utilisateur.php';
 
 // Traitement du formulaire (Logique conservée sans retouche)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nom = $_POST['nom'];
-    $prenom = $_POST['prenom'];
-    $email = $_POST['email'];
-    $telephone = $_POST['telephone'] ?? null;
-    $password = $_POST['password'];
-    
-    $database = new basededonnee();
-    $utilisateur = new Utilisateur($database);
-    
-    $userId = $utilisateur->inscription($nom, $prenom, $email, $telephone, $password);
-    
-    $_SESSION['user_id'] = $userId;
-    $_SESSION['user_nom'] = $nom;
-    $_SESSION['user_prenom'] = $prenom;
-    $_SESSION['user_email'] = $email;
-    
-    header('Location: index.php');
-    exit;
+  $nom = trim((string)($_POST['nom'] ?? ''));
+  $prenom = trim((string)($_POST['prenom'] ?? ''));
+  $email = trim((string)($_POST['email'] ?? ''));
+  $telephone = trim((string)($_POST['telephone'] ?? '')) ?: null;
+  $password = (string)($_POST['password'] ?? '');
+  $passwordConfirm = (string)($_POST['password_confirm'] ?? '');
+
+  $error = null;
+
+  if ($nom === '' || $prenom === '' || $email === '' || $password === '') {
+    $error = 'Merci de remplir tous les champs requis.';
+  } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $error = 'Email invalide.';
+  } elseif ($password !== $passwordConfirm) {
+    $error = 'Les mots de passe ne correspondent pas.';
+  } else {
+    try {
+      $pdo = DB::pdo();
+
+      // Vérifier que l'email n'existe pas
+      $st = $pdo->prepare('SELECT id FROM utilisateur WHERE email = :email LIMIT 1');
+      $st->execute([':email' => $email]);
+      if ($st->fetch()) {
+        $error = 'Un compte existe déjà avec cet email.';
+      } else {
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $ins = $pdo->prepare('INSERT INTO utilisateur (nom, prenom, email, telephone, mot_de_passe_hash) VALUES (:nom, :prenom, :email, :telephone, :hash)');
+        $ins->execute([
+          ':nom' => $nom,
+          ':prenom' => $prenom,
+          ':email' => $email,
+          ':telephone' => $telephone,
+          ':hash' => $hash,
+        ]);
+
+        $userId = (int)$pdo->lastInsertId();
+
+        $_SESSION['user_id'] = $userId;
+        $_SESSION['user_nom'] = $nom;
+        $_SESSION['user_prenom'] = $prenom;
+        $_SESSION['user_email'] = $email;
+
+        header('Location: vente.php');
+        exit;
+      }
+    } catch (Throwable $e) {
+      $error = 'Erreur serveur. Réessaie plus tard.';
+    }
+  }
 }
 
 // Si déjà connecté, rediriger vers l'accueil
@@ -71,6 +102,45 @@ if (isset($_SESSION['user_id'])) {
   </header>
 
   <main class="container">
+    <div class="auth-container">
+      <div class="auth-box">
+        <h2>Créer un compte</h2>
+        <form action="inscription.php" method="POST" class="auth-form">
+          <div class="form-group">
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" name="nom" required placeholder="Votre nom">
+          </div>
+
+          <div class="form-group">
+            <label for="prenom">Prénom</label>
+            <input type="text" id="prenom" name="prenom" required placeholder="Votre prénom">
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required placeholder="votre@email.com">
+          </div>
+
+          <div class="form-group">
+            <label for="telephone">Téléphone</label>
+            <input type="tel" id="telephone" name="telephone" placeholder="06 12 34 56 78">
+          </div>
+
+          <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input type="password" id="password" name="password" required placeholder="••••••••">
+          </div>
+
+          <div class="form-group">
+            <label for="password_confirm">Confirmer le mot de passe</label>
+            <input type="password" id="password_confirm" name="password_confirm" required placeholder="••••••••">
+          </div>
+
+          <button type="submit" class="btn-submit">Créer mon compte</button>
+        </form>
+
+        <div class="auth-footer">
+          <p>Déjà un compte ? <a href="connexion.php">Se connecter</a></p>
     <div class="auth-box reveal">
       <h2>Devenir <i>Membre</i></h2>
 
