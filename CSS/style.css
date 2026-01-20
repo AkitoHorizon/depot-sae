@@ -317,6 +317,48 @@ p { font-size: 1rem; line-height: 1.8; opacity: 0.9; }
   box-sizing: border-box;
   opacity: 0; transform: translateY(50px); transition: 1s ease-out; /* Pour l'animation reveal */
 }
+/* css pour la page manifestation finale */
+#map-container {
+        position: relative;
+        height: 600px;
+        width: 100%;
+        border-top: 2px solid var(--vert);
+        border-bottom: 2px solid var(--vert);
+        margin-bottom: 100px;
+        z-index: 1; /* Pour ne pas passer au dessus du menu */
+    }
+    #map {
+        height: 100%;
+        width: 100%;
+        /* Petit filtre sépia pour donner un aspect "vieille carte" */
+        filter: sepia(20%) contrast(95%);
+    }
+
+    /* Personnalisation des popups Leaflet */
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+        background: var(--rouge);
+        color: var(--beige);
+        border: 1px solid var(--vert);
+        border-radius: 0;
+        font-family: 'Montserrat', sans-serif;
+    }
+    .leaflet-popup-content h3 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.4rem;
+        margin: 0 0 5px 0;
+        color: #fff;
+        border-bottom: 1px solid var(--beige);
+        padding-bottom: 5px;
+    }
+    .leaflet-popup-content strong {
+        color: var(--vert); /* Devient beige clair car sur fond rouge */
+        filter: brightness(1.5);
+        display: block;
+        margin-bottom: 5px;
+    }
+    .leaflet-container a.leaflet-popup-close-button {
+        color: var(--beige);
+    }
 /* --- CONFIGURATION DESKTOP --- */
 @media (min-width: 900px) {
   
