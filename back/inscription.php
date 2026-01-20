@@ -3,7 +3,7 @@ session_start();
 require_once __DIR__ . '/DB.php';
 require_once __DIR__ . '/../classes/Utilisateur.php';
 
-// Traitement du formulaire
+// Traitement du formulaire (Logique conservée sans retouche)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $nom = trim((string)($_POST['nom'] ?? ''));
   $prenom = trim((string)($_POST['prenom'] ?? ''));
@@ -63,51 +63,42 @@ if (isset($_SESSION['user_id'])) {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inscription - Les Mécaniques Anciennes du Haut-Lignon</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Great+Vibes&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="CSS/style.css">
-  <link rel="stylesheet" href="CSS/connexion.css">
+  <title>Inscription | Les Mécaniques Anciennes</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../CSS/style.css">
+
 </head>
-<style>
-    .header {
-        background: url('images/fondheader.JPG') no-repeat center 80% / cover;
-        border-bottom-left-radius: 25px;
-        border-bottom-right-radius: 25px;
-        overflow: hidden;
-    }
-</style>
+
 <body>
+  <div class="noise-overlay"></div>
 
-  <header class="header"> 
-    <div class="top-bar">
-      <div class="menu-box">
-        <input type="checkbox" id="menu-toggle" hidden>
-        <label for="menu-toggle" class="burger">☰</label>
-        <nav class="nav-menu">
-          <a href="index.php">Accueil</a>
-          <a href="manifestations.php">Manifestations</a>
-          <a href="ventes.php">Ventes</a>
-          <a href="contact.php">Contact</a>
-          <hr class="menu-divider">
-          <a href="connexion.php">Connexion</a>
-          <a href="inscription.php">Inscription</a>
-        </nav>
-      </div>
-
+  <nav class="navbar">
+    <div class="nav-container">
       <a href="index.php" class="logo">
-        <img src="images/logo.png" alt="Logo">
+        <img src="images/logo.png" alt="Logo" width="75" height="75">
+        <span class="logo-text">LA PASSION <span class="highlight">AUTOMOBILE</span></span>
       </a>
-
-      <a href="contact.php" class="btn-accueil">ADHÉRER</a>
     </div>
+  </nav>
 
-    <h1 class="hero-title">Inscription</h1>
+  <header class="header">
+    <div class="header-overlay"></div>
+    <div class="hero-content">
+      <p class="pre-title">Rejoindre le club</p>
+      <h1 class="hero-title">
+        <span class="line">Créer un</span>
+        <span class="line indent">Compte</span>
+      </h1>
+    </div>
   </header>
 
   <main class="container">
@@ -150,29 +141,55 @@ if (isset($_SESSION['user_id'])) {
 
         <div class="auth-footer">
           <p>Déjà un compte ? <a href="connexion.php">Se connecter</a></p>
+    <div class="auth-box reveal">
+      <h2>Devenir <i>Membre</i></h2>
+
+      <form method="post" action="inscription.php">
+        <div class="form-grid">
+            <div>
+                <label for="prenom">Prénom</label>
+                <input type="text" id="prenom" name="prenom" required placeholder="Jean">
+            </div>
+            <div>
+                <label for="nom">Nom</label>
+                <input type="text" id="nom" name="nom" required placeholder="Dupont">
+            </div>
         </div>
+
+        <label for="email">Adresse Email</label>
+        <input type="email" id="email" name="email" required placeholder="jean@exemple.com">
+
+        <label for="telephone">Téléphone (Optionnel)</label>
+        <input type="tel" id="telephone" name="telephone" placeholder="06 00 00 00 00">
+
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" name="password" required placeholder="••••••••">
+
+        <button type="submit">Créer mon accès</button>
+      </form>
+
+      <div class="auth-footer">
+        Déjà inscrit ? <a href="connexion.php">Se connecter à l'espace membre</a>
       </div>
     </div>
   </main>
 
   <footer class="footer">
-    <div class="footer-container">
-      
-      <div class="footer-text-group">
-        <div class="footer-links">
-          <a href="contact.php">Contact</a>
-          <a href="mentions.php">Mentions</a>
-        </div>
-        <p class="copyright">&copy; 2026 Les Mécaniques Anciennes du Haut-Lignon</p>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h4>Mécaniques Anciennes</h4>
       </div>
-
-      <div class="footer-social">
-        <a href="https://www.facebook.com/people/Les-M%C3%A9caniques-Anciennes-du-Haut-Lignon/100055948035657/?epa=SEARCH_BOX#" target="_blank">
-          <img src="images/logofb.png" alt="Facebook" class="fb-icon">
-        </a>
-      </div>
-
     </div>
+    <div class="copyright">&copy; 2026 Tous droits réservés.</div>
   </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>
