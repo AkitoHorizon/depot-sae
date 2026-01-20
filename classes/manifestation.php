@@ -1,5 +1,5 @@
 <?php
-final class Rassemblement {
+final class manifestation {
   public function __construct(
     public ?int $id,
     public string $titre,
