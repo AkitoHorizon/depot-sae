@@ -1,37 +1,128 @@
+<?php
+declare(strict_types=1);
+
+session_start();
+
+require __DIR__ . '/DB.php';
+
+$pdo = DB::pdo();
+
+// CSRF simple
+if (empty($_SESSION['csrf'])) {
+    $_SESSION['csrf'] = bin2hex(random_bytes(16));
+}
+$csrf = $_SESSION['csrf'];
+
+$contactSuccess = null;
+$contactError = null;
+
+$adhSuccess = null;
+$adhError = null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $token = $_POST['csrf'] ?? '';
+    if (!hash_equals($csrf, $token)) {
+        $contactError = "Action refusÃ©e (sÃ©curitÃ©). Recharge la page.";
+        $adhError = "Action refusÃ©e (sÃ©curitÃ©). Recharge la page.";
+    } else {
+        $type = $_POST['type'] ?? '';
+
+        if ($type === 'contact') {
+            $nom = trim($_POST['nom'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $objet = trim($_POST['objet'] ?? 'Contact');
+            $message = trim($_POST['message'] ?? '');
+
+            if ($nom === '' || $email === '' || $message === '') {
+                $contactError = "Merci de remplir tous les champs du formulaire de contact.";
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $contactError = "Email invalide.";
+            } else {
+                try {
+                    $stmt = $pdo->prepare("
+                        INSERT INTO message_contact (nom, email, objet, message)
+                        VALUES (:nom, :email, :objet, :message)
+                    ");
+                    $stmt->execute([
+                        ':nom' => $nom,
+                        ':email' => $email,
+                        ':objet' => ($objet === '' ? 'Contact' : $objet),
+                        ':message' => $message
+                    ]);
+
+                    $contactSuccess = "Message envoyÃ© âœ…";
+                } catch (Throwable $e) {
+                    $contactError = "Erreur serveur. RÃ©essaie plus tard.";
+                }
+            }
+        }
+
+        if ($type === 'adhesion') {
+            $nom = trim($_POST['nom'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $vehicule = trim($_POST['vehicule'] ?? '');
+
+            if ($nom === '' || $email === '' || $vehicule === '') {
+                $adhError = "Merci de remplir tous les champs du formulaire dâ€™adhÃ©sion.";
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $adhError = "Email invalide.";
+            } else {
+                try {
+                    $objet = "Demande d'adhÃ©sion";
+                    $message = "Demande d'adhÃ©sion\nNom: {$nom}\nEmail: {$email}\nVÃ©hicule: {$vehicule}";
+
+                    $stmt = $pdo->prepare("
+                        INSERT INTO message_contact (nom, email, objet, message)
+                        VALUES (:nom, :email, :objet, :message)
+                    ");
+                    $stmt->execute([
+                        ':nom' => $nom,
+                        ':email' => $email,
+                        ':objet' => $objet,
+                        ':message' => $message
+                    ]);
+
+                    $adhSuccess = "Demande dâ€™adhÃ©sion envoyÃ©e âœ…";
+                } catch (Throwable $e) {
+                    $adhError = "Erreur serveur. RÃ©essaie plus tard.";
+                }
+            }
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact | Les Mécaniques Anciennes du Haut-Lignon</title>
-  
+  <title>Contact | Les MÃ©caniques Anciennes du Haut-Lignon</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  
+
   <link rel="stylesheet" href="CSS/style.css">
 
   <style>
-    /* Surcharge spécifique pour le fond du header de la page contact */
-    .header {
-        background: url('images/fondheader1.JPG') no-repeat center 70% / cover !important;
-    }
-    /* Style minimal pour les formulaires pour qu'ils s'adaptent au fond rouge */
+    .header { background: url('images/fondheader1.JPG') no-repeat center 70% / cover !important; }
     form { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-    input, textarea { 
-        width: 100%; padding: 12px; 
-        background: rgba(255,255,255,0.1); 
-        border: 1px solid var(--beige); 
-        color: var(--beige); 
+    input, textarea {
+        width: 100%; padding: 12px;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid var(--beige);
+        color: var(--beige);
         font-family: 'Montserrat', sans-serif;
     }
-    button { 
-        background: var(--beige); color: var(--rouge); 
-        border: none; padding: 15px; cursor: pointer; 
-        font-weight: bold; text-transform: uppercase; 
+    button {
+        background: var(--beige); color: var(--rouge);
+        border: none; padding: 15px; cursor: pointer;
+        font-weight: bold; text-transform: uppercase;
         transition: 0.3s;
     }
     button:hover { background: #fff; transform: translateY(-3px); }
+    .msg { margin-top: 10px; padding: 10px; border-radius: 5px; }
+    .msg.ok { background:#28a745; color:#fff; }
+    .msg.err { background:#dc3545; color:#fff; }
   </style>
 </head>
 <body>
@@ -43,14 +134,14 @@
         <img src="images/logo.png" alt="Logo" width="75" height="75">
         <span class="logo-text">LA PASSION <span class="highlight">AUTOMOBILE</span></span>
       </a>
-      
+
       <div class="menu-wrap">
         <input type="checkbox" id="menu-toggle" hidden>
         <label for="menu-toggle" class="burger" aria-label="Menu">
             <span class="line top"></span>
             <span class="line bottom"></span>
         </label>
-        
+
         <div class="menu-overlay">
           <svg class="bg-motif" viewBox="0 0 200 60" fill="none" aria-hidden="true">
             <path d="M40 50C25 50 15 38 15 25C15 12 25 0 40 0C32 0 25 8 25 25C25 42 32 50 40 50Z" fill="currentColor"/>
@@ -60,10 +151,10 @@
 
           <ul class="nav-links">
             <li><a href="index.php">Accueil</a></li>
-            <li><a href="manifestationfinale.php">Manifestations</a></li>
-            <li><a href="back/manifestationfinale.php">Manifestations</a></li>
+            <li><a href="manifestations.html">Manifestations</a></li>
             <li><a href="back/vente.php">Ventes</a></li>
-            <li><a href="contact.html" class="btn-menu-member">Devenir Membre</a></li>
+            <li><a href="contact.php">Contact</a></li>
+            <li><a href="contact.php" class="btn-menu-member">Devenir Membre</a></li>
           </ul>
         </div>
       </div>
@@ -79,52 +170,71 @@
         <span class="line indent">Contacter</span>
       </h1>
       <div class="scroll-down">
-        <span>Écrivez-nous</span>
+        <span>Ã‰crivez-nous</span>
         <div class="vertical-line"></div>
       </div>
     </div>
   </header>
 
   <main class="container">
-    
+
     <article class="row reveal style-1">
       <div class="img-frame">
         <img src="images/fondheader.JPG" alt="Contactez-nous">
       </div>
       <div class="text-content">
         <span class="chapter">01</span>
-        <h2>Écrivez <br><i>Nous</i></h2>
+        <h2>Ã‰crivez <br><i>Nous</i></h2>
         <p>Une question sur nos prochains rassemblements ou besoin d'un renseignement technique ? Utilisez le formulaire ci-dessous.</p>
-        
-        <button id="btn-show-contact" onclick="showForm('contact')">Afficher le formulaire de contact</button>
-        
-        <form id="form-contact" style="display: none;">
+
+        <button id="btn-show-contact" type="button" onclick="showForm('contact')">Afficher le formulaire de contact</button>
+
+        <form id="form-contact" method="post" action="contact.php" style="display: none;">
+            <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8') ?>">
+            <input type="hidden" name="type" value="contact">
+
             <input type="text" name="nom" placeholder="Votre nom" required>
             <input type="email" name="email" placeholder="Votre email" required>
+            <input type="text" name="objet" placeholder="Objet (optionnel)">
             <textarea name="message" rows="4" placeholder="Votre message" required></textarea>
+
             <button type="submit">Envoyer le message</button>
-            <div id="message-contact" style="margin-top: 10px; padding: 10px; display: none; border-radius: 5px;"></div>
+
+            <?php if ($contactSuccess): ?>
+              <div class="msg ok"><?= htmlspecialchars($contactSuccess, ENT_QUOTES, 'UTF-8') ?></div>
+            <?php elseif ($contactError): ?>
+              <div class="msg err"><?= htmlspecialchars($contactError, ENT_QUOTES, 'UTF-8') ?></div>
+            <?php endif; ?>
         </form>
       </div>
     </article>
-    
+
     <article class="row reveal style-2">
       <div class="img-frame">
-        <img src="images/qui.jpg" alt="Adhésion">
+        <img src="images/qui.jpg" alt="AdhÃ©sion">
       </div>
       <div class="text-content">
         <span class="chapter">02</span>
         <h2>Devenir <br><i>Membre</i></h2>
-        <p>Rejoignez notre cercle de passionnés pour partager l'amour de la belle mécanique et du patrimoine du Haut-Lignon.</p>
-        
-        <button id="btn-show-adhesion" onclick="showForm('adhesion')">Afficher le formulaire d'adhésion</button>
-        
-        <form id="form-adhesion" style="display: none;">
+        <p>Rejoignez notre cercle de passionnÃ©s pour partager l'amour de la belle mÃ©canique et du patrimoine du Haut-Lignon.</p>
+
+        <button id="btn-show-adhesion" type="button" onclick="showForm('adhesion')">Afficher le formulaire d'adhÃ©sion</button>
+
+        <form id="form-adhesion" method="post" action="contact.php" style="display: none;">
+            <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8') ?>">
+            <input type="hidden" name="type" value="adhesion">
+
             <input type="text" name="nom" placeholder="Votre nom" required>
             <input type="email" name="email" placeholder="Votre email" required>
-            <input type="text" name="vehicule" placeholder="Votre véhicule principal" required>
-            <button type="submit">Demander mon adhésion</button>
-            <div id="message-adhesion" style="margin-top: 10px; padding: 10px; display: none; border-radius: 5px;"></div>
+            <input type="text" name="vehicule" placeholder="Votre vÃ©hicule principal" required>
+
+            <button type="submit">Demander mon adhÃ©sion</button>
+
+            <?php if ($adhSuccess): ?>
+              <div class="msg ok"><?= htmlspecialchars($adhSuccess, ENT_QUOTES, 'UTF-8') ?></div>
+            <?php elseif ($adhError): ?>
+              <div class="msg err"><?= htmlspecialchars($adhError, ENT_QUOTES, 'UTF-8') ?></div>
+            <?php endif; ?>
         </form>
       </div>
     </article>
@@ -134,7 +244,7 @@
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-brand">
-        <h4>Mécaniques Anciennes</h4>
+        <h4>MÃ©caniques Anciennes</h4>
         <svg class="emblem-mini" viewBox="0 0 200 60" fill="none" aria-hidden="true">
             <path d="M40 50C25 50 15 38 15 25C15 12 25 0 40 0C32 0 25 8 25 25C25 42 32 50 40 50Z" fill="currentColor"/>
             <path d="M100 50C85 50 75 38 75 25C75 12 85 0 100 0C92 0 85 8 85 25C85 42 92 50 100 50Z" fill="currentColor"/>
@@ -142,20 +252,17 @@
         </svg>
       </div>
       <div class="footer-links">
-        <a href="contact.html">Devenir Membre</a>
-        <a href="mentions.html">Mentions Légales</a>
-        <a href="https://www.facebook.com/people/Les-M%C3%A9caniques-Anciennes-du-Haut-Lignon/100055948035657/?epa=SEARCH_BOX#" target="_blank" class="fb-link">Facebook</a>
+        <a href="contact.php">Devenir Membre</a>
+        <a href="mentions.html">Mentions LÃ©gales</a>
+        <a href="https://www.facebook.com/" target="_blank" class="fb-link">Facebook</a>
       </div>
     </div>
     <div class="copyright">
-      &copy; 2026 Tous droits réservés.
+      &copy; 2026 Tous droits rÃ©servÃ©s.
     </div>
   </footer>
 
   <script>
-    /**
-     * IntersectionObserver pour animer les éléments lors du scroll
-     */
     const observer = new IntersectionObserver((entries, obs) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -164,69 +271,24 @@
         }
       });
     }, { threshold: 0.1 });
-    
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    /**
-     * Modification du DOM : afficher/masquer les formulaires
-     */
     function showForm(type) {
       const formId = 'form-' + type;
       const btnId = 'btn-show-' + type;
       const form = document.getElementById(formId);
       const btn = document.getElementById(btnId);
-      
-      // Modification du DOM : afficher le formulaire
       form.style.display = 'flex';
       btn.style.display = 'none';
     }
 
-    /**
-     * Gestion AJAX des formulaires
-     */
-    function handleFormSubmit(formId, type, messageId) {
-      const form = document.getElementById(formId);
-      const messageDiv = document.getElementById(messageId);
-      
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const formData = new FormData(form);
-        formData.append('type', type);
-        
-        try {
-          const response = await fetch('contact_ajax.php', {
-            method: 'POST',
-            body: formData
-          });
-          
-          const result = await response.json();
-          
-          // Modification du DOM : affichage du message
-          messageDiv.textContent = result.message;
-          messageDiv.style.display = 'block';
-          messageDiv.style.background = result.success ? '#28a745' : '#dc3545';
-          messageDiv.style.color = '#fff';
-          
-          // Si succès, réinitialiser le formulaire
-          if (result.success) {
-            form.reset();
-            setTimeout(() => {
-              messageDiv.style.display = 'none';
-            }, 5000);
-          }
-          
-        } catch (error) {
-          messageDiv.textContent = 'Erreur de connexion au serveur.';
-          messageDiv.style.display = 'block';
-          messageDiv.style.background = '#dc3545';
-          messageDiv.style.color = '#fff';
-        }
-      });
-    }
-    
-    // Initialisation des formulaires AJAX
-    handleFormSubmit('form-contact', 'contact', 'message-contact');
-    handleFormSubmit('form-adhesion', 'adhesion', 'message-adhesion');
+    // Option UX : si on a envoyÃ© un formulaire, on le rÃ©-affiche automatiquement
+    <?php if ($contactSuccess || $contactError): ?>
+      showForm('contact');
+    <?php endif; ?>
+    <?php if ($adhSuccess || $adhError): ?>
+      showForm('adhesion');
+    <?php endif; ?>
   </script>
 </body>
+</html>
