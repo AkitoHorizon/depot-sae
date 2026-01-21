@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $type = $_POST['type'] ?? '';
 
-/*FORMULAIRE CONTACT */
+/* FORMULAIRE CONTACT */
 if ($type === 'contact') {
     $nom = trim($_POST['nom'] ?? '');
     $email = trim($_POST['email'] ?? '');
@@ -53,7 +53,7 @@ if ($type === 'contact') {
     }
 }
 
-/*FORMULAIRE ADHÃ‰SION */
+/*FORMULAIRE ADHÉSION */
 if ($type === 'adhesion') {
     $nom = trim($_POST['nom'] ?? '');
     $email = trim($_POST['email'] ?? '');
