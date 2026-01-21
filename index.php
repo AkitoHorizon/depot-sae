@@ -219,7 +219,7 @@
     </div>
   </footer>
 
-  <!-- =========================== SCRIPT D'ANIMATION AU SCROLL =========================== -->
+  <!--  SCRIPT D'ANIMATION AU SCROLL  -->
   <script>
     const observer = new IntersectionObserver((entries, obs) => {
       entries.forEach(entry => {
