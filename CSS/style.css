@@ -7,31 +7,21 @@
   --easing: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; }/* Inclut le padding et la bordure dans la taille totale des éléments */
 
-body { 
-  margin: 0; 
-  background-color: var(--beige); 
-  color: var(--rouge);
-  font-family: 'Montserrat', sans-serif; 
-  overflow-x: hidden;/* Empêche le scroll horizontal */
-  position: relative; /* Nécessaire pour le pseudo-élément fixe */
-}
-
-/* OPTIMISATION MAJEURE : Remplacement du background-attachment: fixed */
-body { 
+body { /* Styles de base du body */
   margin: 0; /* Supprime les marges par défaut du navigateur */
   background: var(--beige); /* Applique la couleur de fond beige */
+  font-family: 'Montserrat', sans-serif; /* Fallback si Helvetica n'est pas dispo */
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
   color: var(--rouge); 
   font-size: 16px;
-  overflow-x: hidden; 
+  overflow-x: hidden; /* Empêche le scroll horizontal */
   position: relative; /* Indispensable pour le positionnement de la route */
   min-height: 100vh;
 }
 
-/* OPTIMISATION MAJEURE : Remplacement du background-attachment: fixed */
-body::before {
+body::before {/* Motif de fond léger : les lunes du haut lignon*/
   content: "";
   position: fixed; /* Reste fixe sans saccader le scroll */
   top: 0; left: 0; width: 100%; height: 100%;
@@ -40,15 +30,16 @@ body::before {
   background-repeat: repeat;
   z-index: -3000; /*Derrière le contenu */
   pointer-events: none;
-  will-change: transform; /* Aide le GPU */
+  will-change: transform; 
 }
-body::after {
+
+body::after {/* Image de la route en fond */
   content: ""; 
   position: absolute; /* Positionnement "absolu" pour suivre le scroll */
   top: 0; 
   left: 0; 
   width: 100%; /* S'assure que la route couvre toute la largeur */
-  height: 100%; /* S'assure que la route couvre toute la hauteur*/
+  height: 100%; /* S'assure que la route couvre TOUTE la hauteur */
   z-index: -1000;/* Derrière le contenu mais devant le motif où l'on a mis un z-index de -3000 */
   background: url('../images/routerougefondbody.png') no-repeat center top; 
   background-size: 100% 100%; 
@@ -56,32 +47,31 @@ body::after {
   pointer-events: none;/* Permet de cliquer à travers */
 }
 
-/* Texture Grain Papier - Optimisée */
-.noise-overlay {
+.noise-overlay {/* Superposition de bruit, effet de texture */
   position: fixed; inset: 0; /* Raccourci pour top/left/right/bottom:0 */
   pointer-events: none; z-index: 9000; opacity: 0.04;/* Légère opacité et z-index important pour etre devant tout les éléments */
   background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJnoiPjxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjY1IiBudW1PY3RhdmVzPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI2cpIiBvcGFjaXR5PSIwLjUiLz48L3N2Zz4=');
 }
 
 /* --- NAVBAR --- */
-.navbar {
+.navbar {/* Barre de navigation principale */
   position: absolute; top: 0; width: 100%; padding: 30px 5%;/* Pour espacer du bord */
   z-index: 2000; display: flex; justify-content: center;/* Centrer le contenu et le faire passer par dessus l image de fond du header */
 }
-.nav-container {
+.nav-container {/* Conteneur interne de la navbar */
   width: 100%; max-width: 1400px; display: flex; justify-content: space-between; align-items: center;/* Espace entre logo et menu */
 }
 
 .logo { display: flex; align-items: center; gap: 15px; text-decoration: none; }/* Espace entre image et texte */
-.logo img { height: 60px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3)); }
-.logo-text {
+.logo img { height: 60px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3)); }/* Taille et ombre de l'image du logo */
+.logo-text {/* Texte du logo */
   font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--beige); 
   text-transform: uppercase; letter-spacing: 2px; font-weight: 300; display: none; 
 }
-.logo-text .highlight { color: #fff; font-weight: 600; }
+.logo-text .highlight { color: #fff; font-weight: 600; }/* Partie mise en avant du texte du logo */
 
-.menu-wrap { display: flex; align-items: center; }
-.burger {
+.menu-wrap { display: flex; align-items: center; }/* Conteneur du menu et du bouton burger */
+.burger {/* Bouton burger */
   cursor: pointer; z-index: 3000; width: 40px; height: 16px; /* Taille du burger et affichage par dessus les autres éléments grace a un z index élévé */
   display: flex; flex-direction: column; justify-content: space-between;/* Espacement entre les lignes */
 }
@@ -89,7 +79,7 @@ body::after {
 #menu-toggle:checked ~ .burger .line.top { transform: rotate(45deg) translate(5px, 5px); background: var(--beige); }/* Animation de la ligne du haut */
 #menu-toggle:checked ~ .burger .line.bottom { transform: rotate(-45deg) translate(5px, -6px); background: var(--beige); }/* Animation de la ligne du bas */
 
-.menu-overlay {
+.menu-overlay {/* Menu plein écran */
   position: fixed; top: 0; right: 0; height: 100vh; width: 0;  /* Commence fermée */
   background: var(--rouge); border-left: 1px solid var(--vert);/* Bordure verte à gauche */
   overflow: hidden; transition: width 0.6s var(--easing); /* Animation d'ouverture avec un délai pour ne pas être trop brute */
@@ -97,7 +87,7 @@ body::after {
   z-index: 2500; box-shadow: -10px 0 30px rgba(0,0,0,0.5);
 }
 
-.bg-motif {
+.bg-motif {/* Motif de fond dans le menu */
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-10deg);/* Centrage et rotation */
   width: 120%; opacity: 0.05; color: var(--beige); pointer-events: none;
 }
@@ -112,7 +102,7 @@ body::after {
 }
 .nav-links a:hover { color: var(--rouge-vif); font-style: italic; }/* Effet au survol */
 
-#menu-toggle:checked ~ .menu-overlay li { opacity: 1; transform: translateY(0); }
+#menu-toggle:checked ~ .menu-overlay li { opacity: 1; transform: translateY(0); }/* Animation d'apparition des liens quand le menu est ouvert */
 #menu-toggle:checked ~ .menu-overlay li:nth-child(1) { transition-delay: 0.2s; }
 #menu-toggle:checked ~ .menu-overlay li:nth-child(2) { transition-delay: 0.3s; }
 #menu-toggle:checked ~ .menu-overlay li:nth-child(3) { transition-delay: 0.4s; }
@@ -151,7 +141,7 @@ body::after {
 }
 .hero-title .indent { display: block; margin-left: 20%; font-style: italic; color: #fff; }/* Style pour la deuxième ligne du titre */
 
-.scroll-down {
+.scroll-down {/* Indicateur de scroll down */
   order: 3; position: relative; margin-top: 40px; 
   display: flex; flex-direction: column; align-items: center; gap: 15px;
   color: var(--beige); font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase;
@@ -226,43 +216,203 @@ body::after {
   font-family: 'Cormorant Garamond', serif; font-size: 4rem; color: var(--vert);
   opacity: 0.5; position: absolute; top: 20px; right: 30px; line-height: 1; transition: 0.4s;
 }
-h2 {
+h2 {/* Titres dans les rows */
   font-family: 'Cormorant Garamond', serif; font-size: 3rem; color: var(--beige);
   margin: 0 0 20px; line-height: 1; font-weight: 400; text-transform: uppercase;
 }
-h2 i { color: #fff; font-weight: 300; text-transform: none; font-family: 'Cormorant Garamond'; }
+h2 i { color: #fff; font-weight: 300; text-transform: none; font-family: 'Cormorant Garamond'; }/* Style pour le texte en italique dans les titres */
 p { font-size: 1rem; line-height: 1.8; opacity: 0.9; }
 
+/* --- csspageconnection.php --- */
+.auth-box {/* Conteneur de la box d'authentification */
+    max-width: 500px;
+    margin: 0 auto 100px;
+    background-color: var(--rouge);
+    color: var(--beige);
+    padding: 50px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+.auth-box h2 {/* Titre de la box d'authentification */
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    font-weight: 300;
+    line-height: 1.1;
+}
+.auth-box label {/* Style des labels des champs */
+    display: block;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    color: var(--vert);
+}
+.auth-box input {/* Style des champs de saisie */
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 25px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--vert);
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+}
+.auth-box button {/* Style du bouton de connexion */
+    width: 100%;
+    padding: 15px;
+    background: var(--beige);
+    color: var(--rouge);
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.auth-box button:hover {/* Effet au survol du bouton */
+    background: #fff;
+}
+.error-msg {/* Style des messages d'erreur */
+    background: var(--rouge-vif);
+    color: white;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+.auth-footer {/* Pied de page de la box d'authentification */
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+.auth-footer a {/* Style des liens dans le pied de page */
+    color: var(--vert);
+    text-decoration: underline;
+}
 
-/* --- GALERIE défilante --- */
-.gallery-section { /* Section de la galerie défilante */
-  width: 100%; padding: 80px 0;         
-  background: var(--rouge); border-top: 2px solid var(--vert); border-bottom: 2px solid var(--vert); 
-  overflow: hidden; position: relative; z-index: 50;
+
+/* --- SECTION GALERIE CARROUSEL --- */
+.gallery-section {
+  display: flow-root; /* Force le respect des marges et paddings */
+  width: 100%;
+  margin-top: 100px;
+  padding-bottom: 200px; /* Décole le carrousel du footer */
+  padding-left: 8%;      /* Marge à gauche (indentation) */
+  box-sizing: border-box;
+  opacity: 0; transform: translateY(50px); transition: 1s ease-out; /* Pour l'animation reveal */
 }
-.marquee { white-space: nowrap; overflow: hidden; display: flex; }/* Conteneur de la galerie défilante */
-.marquee-content { /* Contenu défilant */
-  display: flex; 
-  animation: scroll 40s linear infinite;
-  will-change: transform; /* Optimisation animation continue */
+.gallery-section.visible { opacity: 1; transform: translateY(0); }/* Animation d'apparition au scroll */
+
+.gallery-header { margin-bottom: 50px; }/* En-tête de la galerie */
+.gallery-header .chapter {/* Numéro de la section */
+  position: relative; top: 0; right: 0; font-size: 0.85rem; letter-spacing: 4px;
+  color: var(--vert); text-transform: uppercase; margin-bottom: 15px; opacity: 1;
 }
-.marquee-content img {/* Style des images de la galerie */
-  height: 400px; width: auto; aspect-ratio: 3/4; object-fit: cover; 
-  margin: 0 10px; filter: grayscale(100%); transition: 0.6s ease; opacity: 0.7; border: 1px solid var(--beige);
+.gallery-title {/* Titre de la galerie */
+  font-family: 'Montserrat', sans-serif; font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.1; font-weight: 400; color: var(--rouge); text-transform: uppercase;
 }
-.marquee-content img:hover { /* Effet au survol des images */
-  filter: grayscale(0%); opacity: 1; transform: scale(1.05); z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+.gallery-title i {/* Style pour le texte en italique dans le titre */
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-weight: 500; color: var(--vert); padding-left: 5px;
 }
-@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+.carousel-container {/* Conteneur du carrousel */
+  position: relative; width: 100%; aspect-ratio: 16 / 8;/* Ratio 16:8 pour le carrousel pour conserver la taille des images */
+  overflow: hidden; background: var(--rouge);/* Fond rouge et scroll horizontal caché/impossible*/
+  box-shadow: -20px 40px 80px rgba(0,0,0,0.2); border-radius: 4px 0 0 4px;
+}
+
+input[name="slider"] { display: none; }/* Cache les boutons radio */
+.carousel-track {/* Largeur/taille du carrousel */
+  display: flex; width: 400%; height: 100%;
+  transition: transform 0.9s var(--easing);
+}
+.slide { width: 25%; height: 100%; }/* Chaque slide prend 25% de la largeur */
+.slide img { width: 100%; height: 100%; object-fit: cover; filter: sepia(20%); }/* Style des images dans le carrousel */
+
+#slide-1:checked ~ .carousel-track { transform: translateX(0%); }/* Positionnement des slides selon le bouton sélectionné */
+#slide-2:checked ~ .carousel-track { transform: translateX(-25%); }
+#slide-3:checked ~ .carousel-track { transform: translateX(-50%); }
+#slide-4:checked ~ .carousel-track { transform: translateX(-75%); }
+
+/* Flèches du carrousel */
+.arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);/* Centrage vertical */
+  width: 60px; height: 60px; background: rgba(49, 14, 16, 0.4);
+  backdrop-filter: blur(8px); color: var(--beige);
+  display: none; align-items: center; justify-content: center;
+  font-size: 1.2rem; cursor: pointer; border-radius: 50%; z-index: 10;
+  transition: 0.4s;
+}
+.arrow:hover { background: var(--vert); color: #fff; }/* Effet au survol des flèches */
+
+#slide-1:checked ~ .carousel-arrows .prev-1, #slide-1:checked ~ .carousel-arrows .next-1,/* Affiche les flèches correspondantes au slide actif */
+#slide-2:checked ~ .carousel-arrows .prev-2, #slide-2:checked ~ .carousel-arrows .next-2,
+#slide-3:checked ~ .carousel-arrows .prev-3, #slide-3:checked ~ .carousel-arrows .next-3,
+#slide-4:checked ~ .carousel-arrows .prev-4, #slide-4:checked ~ .carousel-arrows .next-4 { display: flex; }
+
+.prev-1, .prev-2, .prev-3, .prev-4 { left: 30px; }/* Position de la flèche gauche */
+.next-1, .next-2, .next-3, .next-4 { right: 30px; }/* Position de la flèche droite */
+
+/* Points sous le caroussel */
+.carousel-dots {
+  position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);/* Centrage horizontal */
+  display: flex; gap: 15px; z-index: 10;/* Espacement entre les points et z index pour faire passer par dessus les autres éléménts*/
+}
+.dot { width: 8px; height: 8px; background: rgba(244, 227, 178, 0.3); border-radius: 50%; cursor: pointer; }/* Style des 4 points du caroussel*/
+#slide-1:checked ~ .carousel-dots #dot-1,
+#slide-2:checked ~ .carousel-dots #dot-2,
+#slide-3:checked ~ .carousel-dots #dot-3,
+#slide-4:checked ~ .carousel-dots #dot-4 { background: var(--beige); transform: scale(1.6); }
+
+/* --- csspage manifestation finale (carte leaflet) --- */
+#map-container {/* Conteneur de la carte Leaflet */
+    position: relative;
+    height: 600px;
+    width: 100%;
+    border-top: 2px solid var(--vert);
+    border-bottom: 2px solid var(--vert);
+    margin-bottom: 100px;
+    z-index: 1; /* Pour ne pas passer au dessus du menu */
+}
+#map {/* Conteneur de la carte Leaflet */
+    height: 100%;
+    width: 100%;
+    filter: sepia(20%) contrast(95%);
+}
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {/* Style pour les popups Leaflet */
+    background: var(--rouge);
+    color: var(--beige);
+    border: 1px solid var(--vert);
+    border-radius: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+.leaflet-popup-content h3 {/* Style pour les titres dans les popups */
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    margin: 0 0 5px 0;
+    color: #fff;
+    border-bottom: 1px solid var(--beige);
+    padding-bottom: 5px;
+}
+.leaflet-popup-content strong {/* Style pour le texte en gras dans les popups */
+    color: var(--vert); /* Devient beige clair car sur fond rouge */
+    filter: brightness(1.5);
+    display: block;
+    margin-bottom: 5px;
+}
+.leaflet-container a.leaflet-popup-close-button {
+    color: var(--beige);/* Couleur du bouton de fermeture */
+}
 
 /* --- FOOTER --- */
 .footer {/* Pied de page */
-  margin-top: auto;
-  background: var(--rouge); 
-  color: var(--beige);
-  padding: 80px 5% 40px; 
-  border-top: 10px solid var(--vert);
-  width: 100%;
+  margin-top: auto;/* Pousse le footer en bas de la page */
+  background: var(--rouge); /* Fond rouge */
+  color: var(--beige);/* Texte beige */
+  padding: 80px 5% 40px; /* Espacement interne */
+  border-top: 10px solid var(--vert);/* Bordure verte en haut */
+  width: 100%;/* Pleine largeur */
 }
 .footer-inner {/* Conteneur interne du footer */
   max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 30px;
@@ -275,16 +425,42 @@ p { font-size: 1rem; line-height: 1.8; opacity: 0.9; }
 .fb-link { font-weight: bold; color: var(--vert) !important; }/* Lien Facebook spécifique */
 .fb-link:hover { color: #fff !important; }/* Effet au survol du lien Facebook */
 .copyright { margin-top: 50px; font-size: 0.8rem; opacity: 0.5; }/* Texte de copyright */
-/* --- CONFIGURATION DESKTOP STRICTE --- */
+
+/* --- MEDIA QUERIES --- */
+
+/* Responsive: Écrans supérieurs à 500px */
+@media (min-width: 500px) { 
+  .logo-text { display: block; } 
+}
+
+/* Responsive: Tablette et Mobile */
+@media (max-width: 768px) {
+  .gallery-section { padding-left: 5%; padding-bottom: 100px; }
+  .carousel-container { aspect-ratio: 4/3; }
+}
+
+/* Responsive: Écrans supérieurs à 768px (Menu overlay et Footer) */
+@media (min-width: 768px) { 
+  #menu-toggle:checked ~ .menu-overlay { width: 30%; min-width: 350px; } 
+  .footer-inner { flex-direction: row; justify-content: space-between; text-align: left; }
+}
+
+/* Responsive: Configuration Desktop stricte (Zig-zag) et Logo */
 @media (min-width: 900px) {
-  
+  .logo img { height: 75px; } 
+  .logo-text { font-size: 1.3rem; } 
+  .footer-inner { flex-direction: row; justify-content: space-between; text-align: left; }
 
-  .row:nth-child(odd) { flex-direction: row; }/* Impairs (1, 3) : Image GAUCHE / Texte DROITE */
+  /* Impairs (1, 3) : Image GAUCHE / Texte DROITE */
+  .row:nth-child(odd) { flex-direction: row; }
   
-  .row:nth-child(even) { flex-direction: row-reverse; }/* Pairs (2, 4) : Image DROITE / Texte GAUCHE */
+  /* Paires (2, 4) : Image DROITE / Texte GAUCHE */
+  .row:nth-child(even) { flex-direction: row-reverse; }
 
-  .style-1 .img-frame { width: 55%; height: 600px; }/* Image à GAUCHE, Texte à DROITE */
-  .style-1 .text-content { /* Texte à DROITE */
+  /* STYLE 1 (Row 1 - IMPAIRE) : Image à GAUCHE, Texte à DROITE */
+
+  .style-1 .img-frame { width: 55%; height: 600px; }
+  .style-1 .text-content { 
       width: 40%; 
       margin-left: -80px; /* Mord sur l'image à gauche */
       padding: 70px; 
@@ -292,9 +468,11 @@ p { font-size: 1rem; line-height: 1.8; opacity: 0.9; }
       text-align: left;
   }
 
-  .style-2 { align-items: flex-end; }/* Image à DROITE, Texte à GAUCHE */
-  .style-2 .img-frame { width: 50%; height: 750px; }/* Image à DROITE */
-  .style-2 .text-content { /* Texte à GAUCHE */
+  /* STYLE 2 (Row 2 - PAIRE) - Portrait : Image à DROITE, Texte à GAUCHE */
+
+  .style-2 { align-items: flex-end; }
+  .style-2 .img-frame { width: 50%; height: 750px; }
+  .style-2 .text-content { 
       width: 45%; 
       margin-right: -100px; /* Mord sur l'image à droite */
       margin-bottom: 50px;
@@ -302,21 +480,24 @@ p { font-size: 1rem; line-height: 1.8; opacity: 0.9; }
       border-right: 6px solid var(--vert); /* Barre à DROITE du texte */
       text-align: right;
   }
-  .style-2 .chapter { font-size: 10rem; opacity: 0.1; top: 0; left: 20px; right: auto; }/* Numéro agrandi et déplacé */
+  .style-2 .chapter { font-size: 10rem; opacity: 0.1; top: 0; left: 20px; right: auto; }
 
-  .style-3 { justify-content: flex-start; }/* Image à GAUCHE, Texte à DROITE */
-  .style-3 .img-frame { width: 75%; height: 550px; } /* Image à GAUCHE */
-  .style-3 .text-content { /* Texte à DROITE */
+  /* STYLE 3 (Row 3 - IMPAIR) - Cinéma : Image à GAUCHE, Texte à DROITE */
+  .style-3 { justify-content: flex-start; }
+  .style-3 .img-frame { width: 75%; height: 550px; } 
+  .style-3 .text-content { 
       width: 40%; 
-      margin-left: -150px; /* Mord sur l'image à gauche */
+      margin-left: -150px; /* Mord très fort sur l'image à gauche */
       background-color: rgba(49, 14, 16, 0.9);
       border-left: 6px solid var(--vert); /* Barre à GAUCHE du texte */
       text-align: left;
   }
 
-  .style-4 { gap: 0; }/* Image à DROITE, Texte à GAUCHE */
-  .style-4 .img-frame { width: 55%; height: 600px; }/* Image à DROITE */
-  .style-4 .text-content { /* Texte à GAUCHE */
+  /* STYLE 4 (Row 4 - PAIR) - Massif : Image à DROITE, Texte à GAUCHE */
+
+  .style-4 { gap: 0; }
+  .style-4 .img-frame { width: 55%; height: 600px; }
+  .style-4 .text-content { 
       width: 45%; 
       margin-right: -50px; /* Mord sur l'image à droite */
       padding: 70px; 
@@ -325,11 +506,61 @@ p { font-size: 1rem; line-height: 1.8; opacity: 0.9; }
   }
   .style-4 .chapter { position: relative; top: 0; right: 0; display: inline-block; margin-bottom: 20px; font-size: 2rem; border-bottom: 1px solid var(--vert); }
 }
-  .footer-inner { flex-direction: row; justify-content: space-between; text-align: left; } /* Disposition en ligne sur grand écran */
+@media (max-width: 480px) {
 
-@media (min-width: 500px) { .logo-text { display: block; } }
-@media (min-width: 900px) { .logo img { height: 75px; } .logo-text { font-size: 1.3rem; } }
-@media (min-width: 768px) { #menu-toggle:checked ~ .menu-overlay { width: 30%; min-width: 350px; } }/* Sur grand écran, le menu prend 30% de la largeur avec une largeur minimale */
+  /* On réduit drastiquement la taille des textes pour éviter que les mots soient coupés */
+  .hero-title {
+    font-size: 2.8rem;
+    line-height: 1.1;  /* Resserre l'espace entre les lignes */
+  }
+  .hero-title .indent {
+    margin-left: 10%; /* Moins de décalage pour rester dans l'écran */
+  }
+  .pre-title {
+    font-size: 0.75rem;
+    letter-spacing: 2px; /* On réduit l'espacement pour gagner de la place */
+  }
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+  }
+  h2 i {
+    display: block; /* Force le passage à la ligne si nécessaire */
+    font-size: 1.8rem;
+  }
+  p {
+    font-size: 0.95rem;
+    line-height: 1.6;   /* Bonne hauteur de ligne pour la lecture mobile */
+    text-align: justify; /*justifie le texte pour faire "bloc" */
+  }
 
+  .chapter {
+    font-size: 2.5rem; /* Réduit la taille du numéro de section */
+    top: 15px;
+    right: 15px;
+    opacity: 0.3; /* Plus transparent pour ne pas gêner la lecture */
+  }
+  .nav-links a {
+    font-size: 1.8rem; /* Réduit la taille des liens pour que tout rentre en hauteur */
+  }
+  .nav-links li {
+    margin: 15px 0; /* Resserre les éléments du menu */
+  }
+  .auth-box {
+    padding: 25px 20px; /* Moins de marge interne pour laisser place au texte */
+  }
+  .auth-box h2 {
+    font-size: 2rem;
+  }
+  .auth-box input, .auth-box label {/* Champs et labels plus petits */
+    font-size: 0.9rem;
+  }
 
-/* Fin media query desktop */
+  .text-content {
+    padding: 30px 20px; /* Réduit le padding interne pour laisser plus de place au texte */
+    width: 95%; /* Prend presque toute la largeur */
+  }
+    .gallery-title {
+    font-size: 2rem; /* Titre de la galerie plus petit */
+  }
+}

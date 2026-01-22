@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : jeu. 15 jan. 2026 à 13:10
+-- Généré le : jeu. 22 jan. 2026 à 00:34
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -14,7 +14,7 @@ SET time_zone = "+00:00";
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLjnjjD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
 --
@@ -35,6 +35,16 @@ CREATE TABLE `accueil_bloc` (
   `ordre_affichage` int(11) DEFAULT 0,
   `actif` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `accueil_bloc`
+--
+
+INSERT INTO `accueil_bloc` (`id`, `titre`, `texte`, `image_url`, `ordre_affichage`, `actif`) VALUES
+(1, 'QUI SOMMES-NOUS', 'Association de collectionneurs, nous nous rejoignons lors de manifestations pour partager des moments autour de notre passion.', 'images/qui.jpg', 1, 1),
+(2, 'PASSION', 'Notre passion pour les mécaniques anciennes nous unit et nous rassemble régulièrement.', 'images/passion.jpg', 2, 1),
+(3, 'PARTAGE', 'Nous aimons partager nos connaissances et nos découvertes de manière conviviale lors de nos manifestations.', 'images/partage.jpg', 3, 1),
+(4, 'CONVIVIAL', 'Les manifestations nous permettent de partager nos connaissances et nos découvertes de manière conviviale.', 'images/convivial.jpg', 4, 1);
 
 -- --------------------------------------------------------
 
@@ -75,6 +85,29 @@ CREATE TABLE `annonce_vehicule` (
   `date_creation` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `annonce_vehicule`
+--
+
+INSERT INTO `annonce_vehicule` (`id`, `utilisateur_id`, `titre`, `marque`, `modele`, `annee`, `moteur`, `kilometrage`, `prix`, `description`, `localisation`, `telephone_contact`, `date_creation`) VALUES
+(1, 1, 'Magnifique Citroën 2CV 1978', 'Citroën', '2CV', 1978, '602 cc', 85000, 12500.00, 'Belle 2CV en excellent état, entièrement restaurée. Carrosserie saine, mécanique révisée. Carte grise de collection. Véhicule de passion à ne pas manquer !', 'Lyon (69)', '06 12 34 56 78', '2026-01-22 00:28:19'),
+(2, 1, 'Renault 4L Vintage 1985', 'Renault', '4L', 1985, '1108 cc', 120000, 6800.00, 'Superbe 4L en état d\'origine, très bien conservée. Deuxième main, carnet d\'entretien complet. Idéale pour balades et collections. Quelques traces d\'usage normales pour l\'âge.', 'Bordeaux (33)', '06 98 76 54 32', '2026-01-22 00:28:19'),
+(3, 1, 'Peugeot 205 GTI 1989 - Collector', 'Peugeot', '205 GTI', 1989, '1.9L 130ch', 95000, 18900.00, 'Mythique 205 GTI Phase 2, état collection. Peinture d\'origine, intérieur cuir refait à neuf. Jamais accidentée, toujours entretenue avec soin. Papiers et contrôle technique OK.', 'Paris (75)', '07 45 23 67 89', '2026-01-22 00:28:19');
+
+-- --------------------------------------------------------
+
+--
+-- Déchargement des données de la table `image_vehicule`
+--
+
+INSERT INTO `image_vehicule` (`id`, `annonce_id`, `url`, `ordre`) VALUES
+(1, 1, 'images/1.JPG', 1),
+(2, 1, 'images/2.JPG', 2),
+(3, 2, 'images/3.JPG', 1),
+(4, 2, 'images/4.JPG', 2),
+(5, 3, 'images/5.JPG', 1),
+(6, 3, 'images/6.JPG', 2);
+
 -- --------------------------------------------------------
 
 --
@@ -92,6 +125,13 @@ CREATE TABLE `association` (
   `url_instagram` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `association`
+--
+
+INSERT INTO `association` (`id`, `nom`, `description`, `adresse`, `email`, `telephone`, `url_facebook`, `url_instagram`) VALUES
+(1, 'Les Mécaniques Anciennes', 'Association de passionnés de véhicules de collection', '12 Rue de la Mécanique, 69000 Lyon', 'contact@meca-anciennes.fr', '04 78 12 34 56', NULL, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -108,8 +148,19 @@ CREATE TABLE `evenement` (
   `lieu` varchar(255) DEFAULT NULL,
   `type_vehicules` varchar(255) DEFAULT NULL,
   `image_principale` varchar(255) DEFAULT NULL,
-  `date_creation` datetime DEFAULT current_timestamp()
+  `date_creation` datetime DEFAULT current_timestamp(),
+  `latitude` decimal(9,6) DEFAULT NULL,
+  `longitude` decimal(9,6) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `evenement`
+--
+
+INSERT INTO `evenement` (`id`, `association_id`, `titre`, `description`, `date_debut`, `date_fin`, `lieu`, `type_vehicules`, `image_principale`, `date_creation`, `latitude`, `longitude`) VALUES
+(1, 1, 'Rassemblement Printanier 2026', 'Grand rassemblement de véhicules de collection au Parc de la Tête d\'Or. Exposition, animations et démonstrations.', '2026-04-15 09:00:00', '2026-04-15 18:00:00', 'Parc de la Tête d\'Or, Lyon', 'Tous véhicules avant 1990', NULL, '2026-01-22 00:30:18', 45.774265, 4.857415),
+(2, 1, 'Sortie Côte d\'Azur', 'Balade estivale sur les routes de la Côte d\'Azur avec halte déjeuner à Saint-Tropez. Inscription obligatoire.', '2026-06-20 08:00:00', '2026-06-20 19:00:00', 'Nice - Saint-Tropez', '2CV, 4L, Méhari', NULL, '2026-01-22 00:30:18', 43.696950, 7.271413),
+(3, 1, 'Exposition Automobiles Anciennes', 'Exposition de véhicules de collection sur la Place Bellecour. Entrée libre pour le public.', '2026-09-12 10:00:00', '2026-09-13 18:00:00', 'Place Bellecour, Lyon', 'Véhicules d\'exception', NULL, '2026-01-22 00:30:18', 45.757814, 4.832011);
 
 -- --------------------------------------------------------
 
@@ -185,6 +236,13 @@ CREATE TABLE `utilisateur` (
   `mot_de_passe_hash` varchar(255) NOT NULL,
   `date_inscription` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `utilisateur`
+--
+
+INSERT INTO `utilisateur` (`id`, `nom`, `prenom`, `email`, `telephone`, `mot_de_passe_hash`, `date_inscription`) VALUES
+(1, 'Dupont', 'Jean', 'jean.dupont@example.com', '06 12 34 56 78', '$2y$10$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJK', '2026-01-22 00:28:19');
 
 -- --------------------------------------------------------
 
@@ -298,7 +356,7 @@ ALTER TABLE `video_archive`
 -- AUTO_INCREMENT pour la table `accueil_bloc`
 --
 ALTER TABLE `accueil_bloc`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT pour la table `adhesion_demande`
@@ -310,19 +368,19 @@ ALTER TABLE `adhesion_demande`
 -- AUTO_INCREMENT pour la table `annonce_vehicule`
 --
 ALTER TABLE `annonce_vehicule`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT pour la table `association`
 --
 ALTER TABLE `association`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT pour la table `evenement`
 --
 ALTER TABLE `evenement`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT pour la table `evenement_image`
@@ -352,7 +410,7 @@ ALTER TABLE `message_contact`
 -- AUTO_INCREMENT pour la table `utilisateur`
 --
 ALTER TABLE `utilisateur`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT pour la table `video_archive`

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 session_start();
 
-require __DIR__ . '/back/DB.php';
+require __DIR__ . '/DB.php';
 
 $pdo = DB::pdo();
 
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ':message' => $message
                     ]);
 
-                    $adhSuccess = "Demande d'adhésion envoyée ✅";
+                    $adhSuccess = "Demande d’adhésion envoyée ✅";
                 } catch (Throwable $e) {
                     $adhError = "Erreur serveur. Réessaie plus tard.";
                 }
