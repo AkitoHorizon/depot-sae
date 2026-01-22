@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 session_start();
 
-require __DIR__ . '/DB.php';
+require __DIR__ . '/back/DB.php';
 
 $pdo = DB::pdo();
 
