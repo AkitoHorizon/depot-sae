@@ -229,8 +229,8 @@ if ($view === 'all') {
 
   <nav class="navbar">
     <div class="nav-container">
-      <a href="index.php" class="logo">
-        <img src="images/logo.png" alt="Logo" width="75" height="75">
+      <a href="../index.php" class="logo">
+        <img src="../images/logo.png" alt="Logo" width="75" height="75">
         <span class="logo-text">LA PASSION <span class="highlight">AUTOMOBILE</span></span>
       </a>
       <div class="menu-wrap">
@@ -238,7 +238,7 @@ if ($view === 'all') {
         <label for="menu-toggle" class="burger" aria-label="Menu"><span class="line top"></span><span class="line bottom"></span></label>
         <div class="menu-overlay">
           <ul class="nav-links">
-            <li><a href="index.php">Accueil</a></li>
+            <li><a href="../index.php">Accueil</a></li>
             <li><a href="vente.php?view=all">Ventes</a></li>
             <?php if($userId): ?>
                 <li><a href="vente.php?view=mine">Mes Annonces</a></li>

@@ -60,8 +60,8 @@ foreach ($rows as $r) {
 
   <nav class="navbar">
     <div class="nav-container">
-      <a href="index.php" class="logo">
-        <img src="images/logo.png" alt="Logo" width="75" height="75">
+      <a href="../index.php" class="logo">
+        <img src="../images/logo.png" alt="Logo" width="75" height="75">
         <span class="logo-text">LA PASSION <span class="highlight">AUTOMOBILE</span></span>
       </a>
       
@@ -75,7 +75,7 @@ foreach ($rows as $r) {
         <div class="menu-overlay">
            <svg class="bg-motif" viewBox="0 0 200 60" fill="none" aria-hidden="true"><path d="M40 50C25 50 15 38 15 25C15 12 25 0 40 0C32 0 25 8 25 25C25 42 32 50 40 50Z" fill="currentColor"/><path d="M100 50C85 50 75 38 75 25C75 12 85 0 100 0C92 0 85 8 85 25C85 42 92 50 100 50Z" fill="currentColor"/><path d="M160 50C145 50 135 38 135 25C135 12 145 0 160 0C152 0 145 8 145 25C145 42 152 50 160 50Z" fill="currentColor"/></svg>
           <ul class="nav-links">
-            <li><a href="index.php">Accueil</a></li>
+            <li><a href="../index.php">Accueil</a></li>
             <li><a href="manifestations.php">Manifestations</a></li>
             <li><a href="vente.php">Ventes</a></li>
             <li><a href="connexion.php">Connexion</a></li>

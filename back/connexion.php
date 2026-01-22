@@ -89,8 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <nav class="navbar">
     <div class="nav-container">
-      <a href="index.php" class="logo">
-        <img src="images/logo.png" alt="Logo" width="75" height="75">
+      <a href="../index.php" class="logo">
+        <img src="../images/logo.png" alt="Logo" width="75" height="75">
         <span class="logo-text">LA PASSION <span class="highlight">AUTOMOBILE</span></span>
       </a>
     </div>
