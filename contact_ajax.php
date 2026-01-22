@@ -18,7 +18,7 @@ $response = [
 
 // Vérifie que la requête est en POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    $response['message'] = 'MÃ©thode non autorisÃ©e.';
+    $response['message'] = 'Méthode non autorisée.';
     echo json_encode($response);
     exit;
 }
@@ -52,7 +52,7 @@ if ($type === 'contact') {
             ]);
 
             $response['success'] = true;
-            $response['message'] = 'Message envoyÃ© avec succÃ¨s.';
+            $response['message'] = 'Message envoyé avec succès.';
         } catch (Throwable $e) {
             $response['message'] = 'Erreur serveur.';
         }
@@ -74,7 +74,7 @@ if ($type === 'adhesion') {
     } else {
         try {
             // Construction du message avec les infos du véhicule
-            $message = "Demande dâ€™adhÃ©sion\nVÃ©hicule : $vehicule";
+            $message = "Demande d'adhésion\nVéhicule : $vehicule";
 
             // Enregistrement en base de données
             $stmt = $pdo->prepare("
@@ -84,12 +84,12 @@ if ($type === 'adhesion') {
             $stmt->execute([
                 ':nom' => $nom,
                 ':email' => $email,
-                ':objet' => 'Demande dâ€™adhÃ©sion',
+                ':objet' => 'Demande d\'adhésion',
                 ':message' => $message
             ]);
 
             $response['success'] = true;
-            $response['message'] = 'Demande dâ€™adhÃ©sion envoyÃ©e.';
+            $response['message'] = 'Demande d\'adhésion envoyée.';
         } catch (Throwable $e) {
             $response['message'] = 'Erreur serveur.';
         }
