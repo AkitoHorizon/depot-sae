@@ -174,7 +174,7 @@ if ($view === 'all') {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="CSS/style.css">
+  <link rel="stylesheet" href="../CSS/style.css">
   <style>
     /* Navigation des onglets spécifique à cette page */
     .tabs-nav { 
