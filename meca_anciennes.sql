@@ -97,6 +97,20 @@ INSERT INTO `annonce_vehicule` (`id`, `utilisateur_id`, `titre`, `marque`, `mode
 -- --------------------------------------------------------
 
 --
+-- Déchargement des données de la table `image_vehicule`
+--
+
+INSERT INTO `image_vehicule` (`id`, `annonce_id`, `url`, `ordre`) VALUES
+(1, 1, 'images/1.JPG', 1),
+(2, 1, 'images/2.JPG', 2),
+(3, 2, 'images/3.JPG', 1),
+(4, 2, 'images/4.JPG', 2),
+(5, 3, 'images/5.JPG', 1),
+(6, 3, 'images/6.JPG', 2);
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `association`
 --
 

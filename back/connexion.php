@@ -38,14 +38,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $pdo = DB::pdo();
 
                 $stmt = $pdo->prepare("
-                    SELECT id, nom, prenom, password_hash 
+                    SELECT id, nom, prenom, mot_de_passe_hash 
                     FROM utilisateur 
                     WHERE email = :email
                 ");
                 $stmt->execute([':email' => $email]);
                 $user = $stmt->fetch();
 
-                if ($user && password_verify($password, $user['password_hash'])) {
+                if ($user && password_verify($password, $user['mot_de_passe_hash'])) {
                     // Succès
                     $_SESSION['id_user'] = (int)$user['id'];
                     $_SESSION['nom']     = $user['nom'];
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   
   <link rel="stylesheet" href="../CSS/style.css">
     <style>
-    /* Styles spécifiques pour cette page */
+    /* Image spécifique pour cette page */
     .header {
         background: url('images/fondheader1.JPG') no-repeat center 70% / cover !important;
     }

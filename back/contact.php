@@ -7,37 +7,45 @@ require __DIR__ . '/DB.php';
 
 $pdo = DB::pdo();
 
-// CSRF simple
+// Génération token CSRF pour sécuriser les formulaires
 if (empty($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(16));
 }
 $csrf = $_SESSION['csrf'];
 
+// Variables de messages pour les formulaires
 $contactSuccess = null;
 $contactError = null;
 
 $adhSuccess = null;
 $adhError = null;
+
+// Traitement des formulaires soumis
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = $_POST['csrf'] ?? '';
+    
+    // Vérification CSRF
     if (!hash_equals($csrf, $token)) {
         $contactError = "Action refusée (sécurité). Recharge la page.";
         $adhError = "Action refusée (sécurité). Recharge la page.";
     } else {
         $type = $_POST['type'] ?? '';
 
+        // Formulaire de contact
         if ($type === 'contact') {
             $nom = trim($_POST['nom'] ?? '');
             $email = trim($_POST['email'] ?? '');
             $objet = trim($_POST['objet'] ?? 'Contact');
             $message = trim($_POST['message'] ?? '');
 
+            // Validation des champs
             if ($nom === '' || $email === '' || $message === '') {
                 $contactError = "Merci de remplir tous les champs du formulaire de contact.";
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $contactError = "Email invalide.";
             } else {
                 try {
+                    // Enregistrement du message en BDD
                     $stmt = $pdo->prepare("
                         INSERT INTO message_contact (nom, email, objet, message)
                         VALUES (:nom, :email, :objet, :message)
@@ -56,17 +64,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
+        // Formulaire d'adhésion
         if ($type === 'adhesion') {
             $nom = trim($_POST['nom'] ?? '');
             $email = trim($_POST['email'] ?? '');
             $vehicule = trim($_POST['vehicule'] ?? '');
 
+            // Validation des champs
             if ($nom === '' || $email === '' || $vehicule === '') {
-                $adhError = "Merci de remplir tous les champs du formulaire d’adhésion.";
+                $adhError = "Merci de remplir tous les champs du formulaire d'adhésion.";
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $adhError = "Email invalide.";
             } else {
                 try {
+                    // Enregistrement de la demande d'adhésion
                     $objet = "Demande d'adhésion";
                     $message = "Demande d'adhésion\nNom: {$nom}\nEmail: {$email}\nVéhicule: {$vehicule}";
 
@@ -263,6 +274,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </footer>
 
   <script>
+    // Animation d'apparition au scroll
     const observer = new IntersectionObserver((entries, obs) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -273,6 +285,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
+    // Affiche le formulaire et masque le bouton
     function showForm(type) {
       const formId = 'form-' + type;
       const btnId = 'btn-show-' + type;
@@ -282,7 +295,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       btn.style.display = 'none';
     }
 
-    // Option UX : si on a envoyé un formulaire, on le ré-affiche automatiquement
+    // Ré-affiche automatiquement le formulaire si message de succès/erreur
     <?php if ($contactSuccess || $contactError): ?>
       showForm('contact');
     <?php endif; ?>

@@ -327,7 +327,7 @@ if ($view === 'all') {
         foreach ($list as $index => $a): 
             // Alternance des styles pour l'effet zig-zag du CSS
             $style = ($index % 2 == 0) ? 'style-1' : 'style-2';
-            $img = $a['image_principale'] ?: 'images/placeholder.jpg';
+            $img = $a['image_principale'] ? '../' . $a['image_principale'] : '../images/placeholder.jpg';
         ?>
             <article class="row reveal <?= $style ?>">
               <div class="img-frame">

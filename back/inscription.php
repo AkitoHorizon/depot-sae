@@ -33,7 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       } else {
         $hash = password_hash($password, PASSWORD_DEFAULT);
         // Note: Assurez-vous que le nom de la colonne est bien mot_de_passe_hash dans votre BDD
-        $ins = $pdo->prepare('INSERT INTO utilisateur (nom, prenom, email, telephone, password_hash) VALUES (:nom, :prenom, :email, :telephone, :hash)');
         $ins = $pdo->prepare('INSERT INTO utilisateur (nom, prenom, email, telephone, mot_de_passe_hash) VALUES (:nom, :prenom, :email, :telephone, :hash)');
         $ins->execute([
           ':nom' => $nom,

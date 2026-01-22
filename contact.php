@@ -7,37 +7,45 @@ require __DIR__ . '/back/DB.php';
 
 $pdo = DB::pdo();
 
-// CSRF simple
+// Génération token CSRF pour sécuriser les formulaires
 if (empty($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(16));
 }
 $csrf = $_SESSION['csrf'];
 
+// Variables de messages pour les formulaires
 $contactSuccess = null;
 $contactError = null;
 
 $adhSuccess = null;
 $adhError = null;
+
+// Traitement des formulaires soumis
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = $_POST['csrf'] ?? '';
+    
+    // Vérification CSRF
     if (!hash_equals($csrf, $token)) {
-        $contactError = "Action refusÃ©e (sÃ©curitÃ©). Recharge la page.";
-        $adhError = "Action refusÃ©e (sÃ©curitÃ©). Recharge la page.";
+        $contactError = "Action refusée (sécurité). Recharge la page.";
+        $adhError = "Action refusée (sécurité). Recharge la page.";
     } else {
         $type = $_POST['type'] ?? '';
 
+        // Formulaire de contact
         if ($type === 'contact') {
             $nom = trim($_POST['nom'] ?? '');
             $email = trim($_POST['email'] ?? '');
             $objet = trim($_POST['objet'] ?? 'Contact');
             $message = trim($_POST['message'] ?? '');
 
+            // Validation des champs
             if ($nom === '' || $email === '' || $message === '') {
                 $contactError = "Merci de remplir tous les champs du formulaire de contact.";
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $contactError = "Email invalide.";
             } else {
                 try {
+                    // Enregistrement du message en BDD
                     $stmt = $pdo->prepare("
                         INSERT INTO message_contact (nom, email, objet, message)
                         VALUES (:nom, :email, :objet, :message)
@@ -49,26 +57,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ':message' => $message
                     ]);
 
-                    $contactSuccess = "Message envoyÃ© âœ…";
+                    $contactSuccess = "Message envoyé ✅";
                 } catch (Throwable $e) {
-                    $contactError = "Erreur serveur. RÃ©essaie plus tard.";
+                    $contactError = "Erreur serveur. Réessaie plus tard.";
                 }
             }
         }
 
+        // Formulaire d'adhésion
         if ($type === 'adhesion') {
             $nom = trim($_POST['nom'] ?? '');
             $email = trim($_POST['email'] ?? '');
             $vehicule = trim($_POST['vehicule'] ?? '');
 
+            // Validation des champs
             if ($nom === '' || $email === '' || $vehicule === '') {
-                $adhError = "Merci de remplir tous les champs du formulaire dâ€™adhÃ©sion.";
+                $adhError = "Merci de remplir tous les champs du formulaire d'adhésion.";
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $adhError = "Email invalide.";
             } else {
                 try {
-                    $objet = "Demande d'adhÃ©sion";
-                    $message = "Demande d'adhÃ©sion\nNom: {$nom}\nEmail: {$email}\nVÃ©hicule: {$vehicule}";
+                    // Enregistrement de la demande d'adhésion
+                    $objet = "Demande d'adhésion";
+                    $message = "Demande d'adhésion\nNom: {$nom}\nEmail: {$email}\nVéhicule: {$vehicule}";
 
                     $stmt = $pdo->prepare("
                         INSERT INTO message_contact (nom, email, objet, message)
@@ -81,9 +92,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ':message' => $message
                     ]);
 
-                    $adhSuccess = "Demande dâ€™adhÃ©sion envoyÃ©e âœ…";
+                    $adhSuccess = "Demande d'adhésion envoyée ✅";
                 } catch (Throwable $e) {
-                    $adhError = "Erreur serveur. RÃ©essaie plus tard.";
+                    $adhError = "Erreur serveur. Réessaie plus tard.";
                 }
             }
         }
@@ -95,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact | Les MÃ©caniques Anciennes du Haut-Lignon</title>
+  <title>Contact | Les Mécaniques Anciennes du Haut-Lignon</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -170,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <span class="line indent">Contacter</span>
       </h1>
       <div class="scroll-down">
-        <span>Ã‰crivez-nous</span>
+        <span>Écrivez-nous</span>
         <div class="vertical-line"></div>
       </div>
     </div>
@@ -184,7 +195,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <div class="text-content">
         <span class="chapter">01</span>
-        <h2>Ã‰crivez <br><i>Nous</i></h2>
+        <h2>Écrivez <br><i>Nous</i></h2>
         <p>Une question sur nos prochains rassemblements ou besoin d'un renseignement technique ? Utilisez le formulaire ci-dessous.</p>
 
         <button id="btn-show-contact" type="button" onclick="showForm('contact')">Afficher le formulaire de contact</button>
@@ -211,14 +222,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <article class="row reveal style-2">
       <div class="img-frame">
-        <img src="images/qui.jpg" alt="AdhÃ©sion">
+        <img src="images/qui.jpg" alt="Adhésion">
       </div>
       <div class="text-content">
         <span class="chapter">02</span>
         <h2>Devenir <br><i>Membre</i></h2>
-        <p>Rejoignez notre cercle de passionnÃ©s pour partager l'amour de la belle mÃ©canique et du patrimoine du Haut-Lignon.</p>
+        <p>Rejoignez notre cercle de passionnés pour partager l'amour de la belle mécanique et du patrimoine du Haut-Lignon.</p>
 
-        <button id="btn-show-adhesion" type="button" onclick="showForm('adhesion')">Afficher le formulaire d'adhÃ©sion</button>
+        <button id="btn-show-adhesion" type="button" onclick="showForm('adhesion')">Afficher le formulaire d'adhésion</button>
 
         <form id="form-adhesion" method="post" action="contact.php" style="display: none;">
             <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8') ?>">
@@ -226,9 +237,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <input type="text" name="nom" placeholder="Votre nom" required>
             <input type="email" name="email" placeholder="Votre email" required>
-            <input type="text" name="vehicule" placeholder="Votre vÃ©hicule principal" required>
+            <input type="text" name="vehicule" placeholder="Votre véhicule principal" required>
 
-            <button type="submit">Demander mon adhÃ©sion</button>
+            <button type="submit">Demander mon adhésion</button>
 
             <?php if ($adhSuccess): ?>
               <div class="msg ok"><?= htmlspecialchars($adhSuccess, ENT_QUOTES, 'UTF-8') ?></div>
@@ -244,7 +255,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-brand">
-        <h4>MÃ©caniques Anciennes</h4>
+        <h4>Mécaniques Anciennes</h4>
         <svg class="emblem-mini" viewBox="0 0 200 60" fill="none" aria-hidden="true">
             <path d="M40 50C25 50 15 38 15 25C15 12 25 0 40 0C32 0 25 8 25 25C25 42 32 50 40 50Z" fill="currentColor"/>
             <path d="M100 50C85 50 75 38 75 25C75 12 85 0 100 0C92 0 85 8 85 25C85 42 92 50 100 50Z" fill="currentColor"/>
@@ -253,16 +264,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <div class="footer-links">
         <a href="contact.php">Devenir Membre</a>
-        <a href="mentions.html">Mentions LÃ©gales</a>
+        <a href="mentions.html">Mentions Légales</a>
         <a href="https://www.facebook.com/" target="_blank" class="fb-link">Facebook</a>
       </div>
     </div>
     <div class="copyright">
-      &copy; 2026 Tous droits rÃ©servÃ©s.
+      &copy; 2026 Tous droits réservés.
     </div>
   </footer>
 
   <script>
+    // Animation d'apparition au scroll
     const observer = new IntersectionObserver((entries, obs) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -273,6 +285,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
+    // Affiche le formulaire et masque le bouton
     function showForm(type) {
       const formId = 'form-' + type;
       const btnId = 'btn-show-' + type;
@@ -282,7 +295,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       btn.style.display = 'none';
     }
 
-    // Option UX : si on a envoyÃ© un formulaire, on le rÃ©-affiche automatiquement
+    // Ré-affiche automatiquement le formulaire si message de succès/erreur
     <?php if ($contactSuccess || $contactError): ?>
       showForm('contact');
     <?php endif; ?>
