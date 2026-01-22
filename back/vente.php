@@ -176,20 +176,51 @@ if ($view === 'all') {
   
   <link rel="stylesheet" href="CSS/style.css">
   <style>
-    /* Styles spécifiques pour adapter le formulaire et les messages au design */
-    .tabs-nav { display: flex; gap: 20px; justify-content: center; margin: 40px 0; }
+    /* Navigation des onglets spécifique à cette page */
+    .tabs-nav { 
+        display: flex; gap: 20px; justify-content: center; margin: 40px 0 80px; 
+        flex-wrap: wrap;
+    }
     .tabs-nav a { 
-        padding: 10px 20px; border: 1px solid var(--rouge); border-radius: 50px; 
-        text-decoration: none; color: var(--rouge); font-size: 0.9rem; transition: 0.3s;
+        padding: 12px 30px; 
+        border: 1px solid var(--rouge); 
+        border-radius: 50px; 
+        text-decoration: none; 
+        color: var(--rouge); 
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.9rem; 
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: 0.3s;
     }
-    .tabs-nav a.active { background: var(--rouge); color: var(--beige); }
-    .msg { text-align: center; padding: 15px; margin: 20px 0; border: 1px solid var(--vert); color: var(--rouge); }
-    .form-vente { max-width: 700px; margin: 0 auto 100px; background: var(--rouge); color: var(--beige); padding: 40px; }
-    .form-vente input, .form-vente textarea { 
-        width: 100%; padding: 12px; margin: 10px 0 20px; 
-        background: rgba(255,255,255,0.05); border: 1px solid var(--vert); color: #fff; 
+    .tabs-nav a:hover, .tabs-nav a.active { 
+        background: var(--rouge); 
+        color: var(--beige); 
     }
-    .form-vente button { background: var(--beige); color: var(--rouge); border: none; padding: 15px; width: 100%; cursor: pointer; font-weight: 600; }
+
+    /* Messages de notification */
+    .msg { 
+        text-align: center; max-width: 600px; margin: 0 auto 40px; 
+        padding: 20px; border: 1px solid var(--vert); 
+        background: rgba(255,255,255,0.5); font-weight: 500;
+    }
+
+    /* Adaptation de la classe .auth-box pour le formulaire large */
+    .auth-box.wide {
+        max-width: 800px; /* Plus large que le login standard */
+        margin-bottom: 150px;
+    }
+    
+    /* Grille spécifique pour les champs du formulaire */
+    .form-grid {
+        display: grid; 
+        grid-template-columns: 1fr 1fr; 
+        gap: 20px;
+    }
+    
+    @media (max-width: 600px) {
+        .form-grid { grid-template-columns: 1fr; gap: 0; }
+    }
   </style>
 </head>
 
@@ -211,6 +242,8 @@ if ($view === 'all') {
             <li><a href="vente.php?view=all">Ventes</a></li>
             <?php if($userId): ?>
                 <li><a href="vente.php?view=mine">Mes Annonces</a></li>
+            <?php else: ?>
+                <li><a href="connexion.php">Connexion</a></li>
             <?php endif; ?>
           </ul>
         </div>
@@ -221,17 +254,23 @@ if ($view === 'all') {
   <header class="header">
     <div class="header-overlay"></div>
     <div class="hero-content">
-      <p class="pre-title">Haut-Lignon</p>
-      <h1 class="hero-title"><span class="line">Belles</span><span class="line indent">Annonces</span></h1>
+      <p class="pre-title">Marché & Collection</p>
+      <h1 class="hero-title"><span class="line">Nos Belles</span><span class="line indent">Anciennes</span></h1>
+      
+      <div class="scroll-down">
+          <div class="vertical-line"></div>
+          <span>Découvrir</span>
+      </div>
     </div>
   </header>
 
   <main class="container">
+    
     <div class="tabs-nav reveal">
-        <a href="vente.php?view=all" class="<?= $view === 'all' ? 'active' : '' ?>">Toutes les annonces</a>
+        <a href="vente.php?view=all" class="<?= $view === 'all' ? 'active' : '' ?>">Le Showroom</a>
         <?php if ($userId): ?>
-            <a href="vente.php?view=mine" class="<?= $view === 'mine' ? 'active' : '' ?>">Mes annonces</a>
-            <a href="vente.php?view=add" class="<?= $view === 'add' ? 'active' : '' ?>">Ajouter</a>
+            <a href="vente.php?view=mine" class="<?= $view === 'mine' ? 'active' : '' ?>">Mon Garage</a>
+            <a href="vente.php?view=add" class="<?= $view === 'add' ? 'active' : '' ?>">Mettre en Vente</a>
         <?php else: ?>
             <a href="connexion.php?redirect=<?= urlencode($redirectAfter) ?>">Se connecter pour vendre</a>
         <?php endif; ?>
@@ -241,43 +280,82 @@ if ($view === 'all') {
     <?php if ($error): ?><div class="msg reveal"><?= htmlspecialchars($error) ?></div><?php endif; ?>
 
     <?php if ($view === 'add' && $userId): ?>
-        <section class="form-vente reveal">
+        <section class="auth-box wide reveal">
             <h2>Nouvelle <br><i>Annonce</i></h2>
             <form method="post">
-                <input type="hidden" name="action" value="add"><input type="hidden" name="csrf" value="<?= $csrf ?>">
-                <label>Titre *</label><input name="titre" required>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                <input type="hidden" name="action" value="add">
+                <input type="hidden" name="csrf" value="<?= $csrf ?>">
+                
+                <label>Titre de l'annonce *</label>
+                <input name="titre" required placeholder="Ex: Citroën DS 21 Pallas...">
+                
+                <div class="form-grid">
                     <div><label>Marque</label><input name="marque"></div>
                     <div><label>Modèle</label><input name="modele"></div>
                     <div><label>Année</label><input name="annee" type="number"></div>
                     <div><label>Prix (€)</label><input name="prix" type="number" step="0.01"></div>
+                    <div><label>Moteur</label><input name="moteur"></div>
+                    <div><label>Kilométrage</label><input name="kilometrage" type="number"></div>
                 </div>
-                <label>Téléphone *</label><input name="telephone_contact" required>
-                <label>Description</label><textarea name="description" rows="5"></textarea>
-                <label>Images (URLs séparées par des virgules)</label><textarea name="images_urls" rows="3"></textarea>
-                <button type="submit">PUBLIER</button>
+
+                <label>Localisation</label>
+                <input name="localisation" placeholder="Ville, Région">
+                
+                <label>Téléphone Contact *</label>
+                <input name="telephone_contact" required>
+                
+                <label>Description détaillée</label>
+                <textarea name="description" rows="5" style="width:100%; padding:12px; margin-bottom:20px; background:rgba(255,255,255,0.05); border:1px solid var(--vert); color:#fff; font-family:'Montserrat';"></textarea>
+                
+                <label>URLs Images (une par ligne ou virgule)</label>
+                <textarea name="images_urls" rows="3" style="width:100%; padding:12px; margin-bottom:20px; background:rgba(255,255,255,0.05); border:1px solid var(--vert); color:#fff; font-family:'Montserrat';"></textarea>
+                
+                <button type="submit">PUBLIER L'ANNONCE</button>
             </form>
         </section>
+
     <?php else: ?>
         <?php 
         $list = ($view === 'mine') ? $myAnnonces : $allAnnonces;
+        if (empty($list)): ?>
+            <div style="text-align:center; margin-bottom:100px;" class="reveal">
+                <h2>Aucun véhicule pour le moment.</h2>
+            </div>
+        <?php endif; ?>
+
+        <?php
         foreach ($list as $index => $a): 
+            // Alternance des styles pour l'effet zig-zag du CSS
             $style = ($index % 2 == 0) ? 'style-1' : 'style-2';
             $img = $a['image_principale'] ?: 'images/placeholder.jpg';
         ?>
             <article class="row reveal <?= $style ?>">
-              <div class="img-frame"><img src="<?= htmlspecialchars($img) ?>" alt="Véhicule"></div>
+              <div class="img-frame">
+                  <img src="<?= htmlspecialchars($img) ?>" alt="Véhicule">
+              </div>
+              
               <div class="text-content">
-                <span class="chapter"><?= htmlspecialchars((string)($a['annee'] ?? '')) ?></span>
-                <h2><?= htmlspecialchars($a['titre']) ?> <br><i><?= htmlspecialchars((string)($a['marque'] ?? '')) ?></i></h2>
-                <p><?= nl2br(htmlspecialchars(mb_strimwidth($a['description'] ?? '', 0, 200, "..."))) ?></p>
-                <p><strong>Prix : <?= $a['prix'] ? number_format((float)$a['prix'], 0, ',', ' ') . ' €' : 'NC' ?></strong></p>
-                <p><small>📞 <?= htmlspecialchars($a['telephone_contact']) ?> | 📍 <?= htmlspecialchars($a['localisation'] ?? 'Haut-Lignon') ?></small></p>
+                <span class="chapter"><?= htmlspecialchars((string)($a['annee'] ?? '----')) ?></span>
+                
+                <h2>
+                    <?= htmlspecialchars($a['titre']) ?> 
+                    <br><i><?= htmlspecialchars((string)($a['marque'] ?? '')) ?></i>
+                </h2>
+                
+                <p><?= nl2br(htmlspecialchars(mb_strimwidth($a['description'] ?? '', 0, 180, "..."))) ?></p>
+                
+                <p style="margin-top:20px; font-size:1.1rem; color:var(--beige);">
+                    <strong><?= $a['prix'] ? number_format((float)$a['prix'], 0, ',', ' ') . ' €' : 'Prix sur demande' ?></strong>
+                </p>
+                
+                <p><small style="opacity:0.7;">\uD83D\uDCDE <?= htmlspecialchars($a['telephone_contact']) ?> &nbsp;|&nbsp; \uD83D\uDCCD <?= htmlspecialchars($a['localisation'] ?? 'Haut-Lignon') ?></small></p>
+                
                 <?php if ($view === 'mine'): ?>
-                    <form method="post" onsubmit="return confirm('Supprimer ?');" style="margin-top:20px;">
-                        <input type="hidden" name="action" value="delete"><input type="hidden" name="csrf" value="<?= $csrf ?>">
+                    <form method="post" onsubmit="return confirm('Vraiment supprimer cette annonce ?');" style="margin-top:20px; text-align:right;">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="csrf" value="<?= $csrf ?>">
                         <input type="hidden" name="annonce_id" value="<?= $a['id'] ?>">
-                        <button type="submit" style="background:var(--rouge-vif); color:#fff; border:none; padding:8px 15px; cursor:pointer;">Supprimer</button>
+                        <button type="submit" style="background:transparent; color:var(--beige); border:1px solid var(--beige); padding:8px 15px; cursor:pointer; font-family:'Montserrat'; text-transform:uppercase; font-size:0.8rem;">Supprimer</button>
                     </form>
                 <?php endif; ?>
               </div>
@@ -288,24 +366,20 @@ if ($view === 'all') {
 
  <footer class="footer">
     <div class="footer-inner">
-      <!-- Marque et emblème de l'association -->
       <div class="footer-brand">
         <h4>Mécaniques Anciennes</h4>
-        <!-- Version miniature de l'emblème SVG -->
         <svg class="emblem-mini" viewBox="0 0 200 60" fill="none" aria-hidden="true">
             <path d="M40 50C25 50 15 38 15 25C15 12 25 0 40 0C32 0 25 8 25 25C25 42 32 50 40 50Z" fill="currentColor"/>
             <path d="M100 50C85 50 75 38 75 25C75 12 85 0 100 0C92 0 85 8 85 25C85 42 92 50 100 50Z" fill="currentColor"/>
             <path d="M160 50C145 50 135 38 135 25C135 12 145 0 160 0C152 0 145 8 145 25C145 42 152 50 160 50Z" fill="currentColor"/>
         </svg>
       </div>
-      <!-- target="_blank" pour ouvrir facebook dans un nouvel onglet-->
       <div class="footer-links">
         <a href="contact.php">Devenir Membre</a>
         <a href="mentions.html">Mentions Légales</a>
-        <a href="https://www.facebook.com/people/Les-M%C3%A9caniques-Anciennes-du-Haut-Lignon/100055948035657/?epa=SEARCH_BOX#" target="_blank" class="fb-link">Facebook</a>
+        <a href="#" target="_blank" class="fb-link">Facebook</a>
       </div>
     </div>
-    <!-- Copyright -->
     <div class="copyright">
       &copy; 2026 Tous droits réservés.
     </div>
