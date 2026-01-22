@@ -125,7 +125,7 @@ foreach ($rows as $r) {
             ?>
             <article class="row reveal <?= $styleClass ?>">
                 <div class="img-frame">
-                    <img src="images/<?= ($i % 2 !== 0) ? 'passion.jpg' : 'partage.jpg' ?>" alt="Event" loading="lazy">
+                    <img src="../images/<?= ($i % 2 !== 0) ? 'passion.jpg' : 'partage.JPG' ?>" alt="Event" loading="lazy">
                 </div>
                 <div class="text-content">
                     <span class="chapter"><?= $jour ?>/<?= $dateObj->format('m') ?></span>

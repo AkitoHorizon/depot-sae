@@ -116,7 +116,7 @@
     <!-- ARTICLE 3 : Héritage & Partage -->
     <article class="row reveal style-3">
       <div class="img-frame">
-        <img src="images/partage.jpg" alt="Partage" loading="lazy" decoding="async">
+        <img src="images/partage.JPG" alt="Partage" loading="lazy" decoding="async">
       </div>
       <div class="text-content">
         <span class="chapter">03</span>
@@ -150,10 +150,10 @@
         <input type="radio" name="slider" id="slide-4">
 
         <div class="carousel-track">
-          <div class="slide"><img src="images/1.jpg" alt="Manifestation 1"></div>
-          <div class="slide"><img src="images/2.jpg" alt="Manifestation 2"></div>
-          <div class="slide"><img src="images/3.jpg" alt="Manifestation 3"></div>
-          <div class="slide"><img src="images/4.jpg" alt="Manifestation 4"></div>
+          <div class="slide"><img src="images/1.JPG" alt="Manifestation 1"></div>
+          <div class="slide"><img src="images/2.JPG" alt="Manifestation 2"></div>
+          <div class="slide"><img src="images/3.JPG" alt="Manifestation 3"></div>
+          <div class="slide"><img src="images/4.JPG" alt="Manifestation 4"></div>
         </div>
 
         <div class="carousel-arrows">

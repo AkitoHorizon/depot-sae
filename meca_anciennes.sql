@@ -27,6 +27,7 @@ SET time_zone = "+00:00";
 -- Structure de la table `accueil_bloc`
 --
 
+DROP TABLE IF EXISTS `accueil_bloc`;
 CREATE TABLE `accueil_bloc` (
   `id` int(11) NOT NULL,
   `titre` varchar(150) NOT NULL,
@@ -52,6 +53,7 @@ INSERT INTO `accueil_bloc` (`id`, `titre`, `texte`, `image_url`, `ordre_affichag
 -- Structure de la table `adhesion_demande`
 --
 
+DROP TABLE IF EXISTS `adhesion_demande`;
 CREATE TABLE `adhesion_demande` (
   `id` int(11) NOT NULL,
   `nom` varchar(100) NOT NULL,
@@ -69,6 +71,7 @@ CREATE TABLE `adhesion_demande` (
 -- Structure de la table `annonce_vehicule`
 --
 
+DROP TABLE IF EXISTS `annonce_vehicule`;
 CREATE TABLE `annonce_vehicule` (
   `id` int(11) NOT NULL,
   `utilisateur_id` int(11) NOT NULL,
@@ -97,23 +100,10 @@ INSERT INTO `annonce_vehicule` (`id`, `utilisateur_id`, `titre`, `marque`, `mode
 -- --------------------------------------------------------
 
 --
--- Déchargement des données de la table `image_vehicule`
---
-
-INSERT INTO `image_vehicule` (`id`, `annonce_id`, `url`, `ordre`) VALUES
-(1, 1, 'images/1.JPG', 1),
-(2, 1, 'images/2.JPG', 2),
-(3, 2, 'images/3.JPG', 1),
-(4, 2, 'images/4.JPG', 2),
-(5, 3, 'images/5.JPG', 1),
-(6, 3, 'images/6.JPG', 2);
-
--- --------------------------------------------------------
-
---
 -- Structure de la table `association`
 --
 
+DROP TABLE IF EXISTS `association`;
 CREATE TABLE `association` (
   `id` int(11) NOT NULL,
   `nom` varchar(150) NOT NULL,
@@ -138,6 +128,7 @@ INSERT INTO `association` (`id`, `nom`, `description`, `adresse`, `email`, `tele
 -- Structure de la table `evenement`
 --
 
+DROP TABLE IF EXISTS `evenement`;
 CREATE TABLE `evenement` (
   `id` int(11) NOT NULL,
   `association_id` int(11) NOT NULL,
@@ -168,6 +159,7 @@ INSERT INTO `evenement` (`id`, `association_id`, `titre`, `description`, `date_d
 -- Structure de la table `evenement_image`
 --
 
+DROP TABLE IF EXISTS `evenement_image`;
 CREATE TABLE `evenement_image` (
   `id` int(11) NOT NULL,
   `evenement_id` int(11) NOT NULL,
@@ -182,6 +174,7 @@ CREATE TABLE `evenement_image` (
 -- Structure de la table `image_vehicule`
 --
 
+DROP TABLE IF EXISTS `image_vehicule`;
 CREATE TABLE `image_vehicule` (
   `id` int(11) NOT NULL,
   `annonce_id` int(11) NOT NULL,
@@ -189,12 +182,25 @@ CREATE TABLE `image_vehicule` (
   `ordre` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `image_vehicule`
+--
+
+INSERT INTO `image_vehicule` (`id`, `annonce_id`, `url`, `ordre`) VALUES
+(1, 1, 'images/1.JPG', 1),
+(2, 1, 'images/2.JPG', 2),
+(3, 2, 'images/3.JPG', 1),
+(4, 2, 'images/4.JPG', 2),
+(5, 3, 'images/5.JPG', 1),
+(6, 3, 'images/6.JPG', 2);
+
 -- --------------------------------------------------------
 
 --
 -- Structure de la table `inscription`
 --
 
+DROP TABLE IF EXISTS `inscription`;
 CREATE TABLE `inscription` (
   `id` int(11) NOT NULL,
   `evenement_id` int(11) NOT NULL,
@@ -211,6 +217,7 @@ CREATE TABLE `inscription` (
 -- Structure de la table `message_contact`
 --
 
+DROP TABLE IF EXISTS `message_contact`;
 CREATE TABLE `message_contact` (
   `id` int(11) NOT NULL,
   `nom` varchar(100) NOT NULL,
@@ -227,6 +234,7 @@ CREATE TABLE `message_contact` (
 -- Structure de la table `utilisateur`
 --
 
+DROP TABLE IF EXISTS `utilisateur`;
 CREATE TABLE `utilisateur` (
   `id` int(11) NOT NULL,
   `nom` varchar(100) NOT NULL,
@@ -250,6 +258,7 @@ INSERT INTO `utilisateur` (`id`, `nom`, `prenom`, `email`, `telephone`, `mot_de_
 -- Structure de la table `video_archive`
 --
 
+DROP TABLE IF EXISTS `video_archive`;
 CREATE TABLE `video_archive` (
   `id` int(11) NOT NULL,
   `titre` varchar(150) NOT NULL,
